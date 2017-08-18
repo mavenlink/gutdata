@@ -25,6 +25,10 @@ require_relative 'process'
 require_relative 'project_role'
 require_relative 'blueprint/blueprint'
 
+require_relative 'metadata/scheduled_mail'
+require_relative 'metadata/scheduled_mail/dashboard_attachment'
+require_relative 'metadata/scheduled_mail/report_attachment'
+
 module GoodData
   class Project < Rest::Resource
     USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
@@ -266,7 +270,7 @@ module GoodData
     #
     # @return [GoodData::ProjectRole] Project role if found
     def blueprint(options = {})
-      result = client.get("/gdc/projects/#{pid}/model/view", params: { includeDeprecated: true })
+      result = client.get("/gdc/projects/#{pid}/model/view", params: { includeDeprecated: true, includeGrain: true })
       polling_url = result['asyncTask']['link']['poll']
       model = client.poll_on_code(polling_url, options)
       bp = GoodData::Model::FromWire.from_wire(model)
@@ -1020,6 +1024,15 @@ module GoodData
                  end
       @json = response
       self
+    end
+
+    # Schedules an email with dashboard or report content
+    def schedule_mail(options = GoodData::ScheduledMail::DEFAULT_OPTS)
+      GoodData::ScheduledMail.create(options.merge(client: client, project: self))
+    end
+
+    def scheduled_mails(options = { :full => false })
+      GoodData::ScheduledMail[:all, options.merge(project: self, client: client)]
     end
 
     # @param [String | Number | Object] Anything that you can pass to GoodData::Schedule[id]
