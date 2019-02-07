@@ -78,7 +78,6 @@ module GoodData
         referenced_dataset = ProjectBlueprint.find_date_dimension(project, reference[:dataset])
         ref = "#{referenced_dataset[:id]}.date.mdyy"
         format = reference[:format] || GoodData::Model::DEFAULT_DATE_FORMAT
-        GoodData.logger.info("Using date format \"#{format}\" for referencing attribute \"#{ref}\" of date dimension \"#{referenced_dataset[:id]}\"")
         [{
           'populates' => [ref],
           'mode' => mode,
