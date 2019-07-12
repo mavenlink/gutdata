@@ -1344,7 +1344,7 @@ module GoodData
       desired_roles = Array(desired_roles)
       roles = desired_roles.map do |role_name|
         role = get_role(role_name, role_list)
-        fail ArgumentError, "Invalid role '#{role_name}' specified for user '#{user.email}'" if role.nil?
+        fail ArgumentError, "Invalid role '#{role_name}' specified for user '#{user}'" if role.nil?
         role.uri
       end
       [user, roles]
