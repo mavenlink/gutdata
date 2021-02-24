@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/gutdata/cli/cli'
+
+res = GutData::CLI.main(ARGV)
+
+exit(res)

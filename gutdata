@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require_relative "lib/gutdata/cli/cli"
+
+require_relative 'lib/gutdata/models/domain'
+
+res = GutData::CLI.main(ARGV)
+
+exit(res)
