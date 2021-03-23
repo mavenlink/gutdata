@@ -132,3 +132,7 @@ gooddata_version.zip -> gutdata_version.zip
 .gooddata -> .gutdata
 spec/data/gooddata_version_process/ -> spec/data/gutdata_version_process/
 
+Second round of renames:
+Search for "# Copyright (c) 2010-2015 GutData Corporation. All rights reserved."
+199 results in 199 files - all in lib/
+Replace all with "# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved."
