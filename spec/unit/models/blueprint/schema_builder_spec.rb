@@ -7,16 +7,16 @@
 require 'pry'
 require 'gutdata/models/model'
 
-describe GoodData::Model::SchemaBuilder do
+describe GutData::Model::SchemaBuilder do
 
   it "should create a schema" do
-    builder = GoodData::Model::SchemaBuilder.new("a_title")
+    builder = GutData::Model::SchemaBuilder.new("a_title")
     blueprint = builder.to_blueprint
     expect(blueprint.datasets.first.title).to eq 'A Title'
   end
 
   it "should create a schema with some columns" do
-    builder = GoodData::Model::SchemaBuilder.new("payments")
+    builder = GutData::Model::SchemaBuilder.new("payments")
     builder.add_attribute("id", :title => "My Id")
     builder.add_fact("amount", :title => "Amount")
 
@@ -25,7 +25,7 @@ describe GoodData::Model::SchemaBuilder do
   end
 
   it "should be able to create from block" do
-    builder = GoodData::Model::SchemaBuilder.create("payments") do |d|
+    builder = GutData::Model::SchemaBuilder.create("payments") do |d|
       d.add_attribute('attr.id', :title => 'Id')
       d.add_label('label.id.name', :title => 'Id Name', reference: 'attr.id')
       d.add_fact('amount', :title => 'Amount')

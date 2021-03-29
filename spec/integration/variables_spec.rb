@@ -10,11 +10,11 @@ describe "Variables implementation", :constraint => 'slow' do
   before(:all) do
     @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
-    blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+    blueprint = GutData::Model::ProjectBlueprint.new(@spec)
     @project = @client.create_project_from_blueprint(blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
 
-    @label = GoodData::Attribute.find_first_by_title('Dev', client: @client, project: @project).label_by_name('email')
+    @label = GutData::Attribute.find_first_by_title('Dev', client: @client, project: @project).label_by_name('email')
 
     commits_data = [
       ["lines_changed","committed_on","dev_id","repo_id"],
@@ -140,7 +140,7 @@ describe "Variables implementation", :constraint => 'slow' do
   end
 
   it "should set up false if all values are nonexistent" do
-    metric = GoodData::Fact.find_first_by_title('Lines Changed', client: @client, project: @project).create_metric
+    metric = GutData::Fact.find_first_by_title('Lines Changed', client: @client, project: @project).create_metric
     filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, "NONEXISTENT1", "NONEXISTENT2", "NONEXISTENT3"]]
     @project.add_variable_permissions(filters, @variable, ignore_missing_values: true)
     # expect(metric.execute).to eq 9

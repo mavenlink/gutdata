@@ -6,7 +6,7 @@
 
 require 'gutdata/models/invitation'
 
-describe GoodData::Invitation do
+describe GutData::Invitation do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
   end

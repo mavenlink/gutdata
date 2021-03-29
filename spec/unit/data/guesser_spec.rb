@@ -6,19 +6,19 @@
 
 require 'gutdata'
 
-describe GoodData::Data::Guesser do
+describe GutData::Data::Guesser do
   skip('Guesser needs to be redone. Failing due to rubocop fixes.')
   it "order LDM types as follows: cp, fact, date, attribute" do
     expect = [:connection_point, :fact, :date, :attribute]
-    result = GoodData::Data::Guesser::sort_types([:fact, :attribute, :connection_point, :date])
+    result = GutData::Data::Guesser::sort_types([:fact, :attribute, :connection_point, :date])
     result.should == expect
 
     expect = [:fact]
-    result = GoodData::Data::Guesser::sort_types([:fact])
+    result = GutData::Data::Guesser::sort_types([:fact])
     result.should == expect
 
     expect = []
-    result = GoodData::Data::Guesser::sort_types([])
+    result = GutData::Data::Guesser::sort_types([])
     result.should == expect
   end
 
@@ -33,9 +33,9 @@ describe GoodData::Data::Guesser do
       ['4', 'one', 'huh', '2010-02-28 08:12:34', '1970-10-23', nil]
     ]
 
-    fields = GoodData::Data::Guesser.new(csv).guess(csv.size + 10)
+    fields = GutData::Data::Guesser.new(csv).guess(csv.size + 10)
 
-    expect = GoodData::Data::Guesser::sort_types([:connection_point, :fact, :attribute])
+    expect = GutData::Data::Guesser::sort_types([:connection_point, :fact, :attribute])
     result = fields['cp']
     result.should == expect
 
@@ -47,15 +47,15 @@ describe GoodData::Data::Guesser do
     result = fields['a2']
     result.should == expect
 
-    expect = GoodData::Data::Guesser::sort_types([:attribute, :connection_point, :date])
+    expect = GutData::Data::Guesser::sort_types([:attribute, :connection_point, :date])
     result = fields['d1']
     result.should == expect
 
-    expect = GoodData::Data::Guesser::sort_types([:attribute, :date])
+    expect = GutData::Data::Guesser::sort_types([:attribute, :date])
     result = fields['d2']
     result.should == expect
 
-    expect = GoodData::Data::Guesser::sort_types([:attribute, :connection_point, :fact])
+    expect = GutData::Data::Guesser::sort_types([:attribute, :connection_point, :fact])
     result = fields['f']
     result.should == expect
 

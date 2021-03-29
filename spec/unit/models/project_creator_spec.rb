@@ -6,7 +6,7 @@
 
 require 'gutdata/models/project_creator'
 
-describe GoodData::Model::ProjectCreator do
+describe GutData::Model::ProjectCreator do
 
   it 'should pick correct update chunk based on priority' do
     # Priority is
@@ -28,7 +28,7 @@ describe GoodData::Model::ProjectCreator do
         'maqlDdlChunks' => "b"
       }}
     ]
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(data)
+    chunk = GutData::Model::ProjectCreator.pick_correct_chunks(data)
     chunk.should == {
       'updateScript' => {
       'cascadeDrops' => false,
@@ -49,7 +49,7 @@ describe GoodData::Model::ProjectCreator do
         'maqlDdlChunks' => "b"
       }}
     ]
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(data)
+    chunk = GutData::Model::ProjectCreator.pick_correct_chunks(data)
     chunk.should == {
       'updateScript' => {
       'cascadeDrops' => true,
@@ -70,7 +70,7 @@ describe GoodData::Model::ProjectCreator do
         'maqlDdlChunks' => "b"
       }}
     ]
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(data)
+    chunk = GutData::Model::ProjectCreator.pick_correct_chunks(data)
     chunk.should == {
       'updateScript' => {
       'cascadeDrops' => true,
@@ -93,7 +93,7 @@ describe GoodData::Model::ProjectCreator do
       }}
     ]
 
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(data, preference: { cascade_drops: true,  preserve_data: false})
+    chunk = GutData::Model::ProjectCreator.pick_correct_chunks(data, preference: { cascade_drops: true,  preserve_data: false})
     chunk.should == {
       'updateScript' => {
       'cascadeDrops' => true,
@@ -116,7 +116,7 @@ describe GoodData::Model::ProjectCreator do
       }}
     ]
 
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(data, preference: { cascade_drops: true,  preserve_data: false})
+    chunk = GutData::Model::ProjectCreator.pick_correct_chunks(data, preference: { cascade_drops: true,  preserve_data: false})
     chunk.should == {
       'updateScript' => {
       'cascadeDrops' => false,

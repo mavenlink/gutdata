@@ -4,7 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-describe GoodData::UserGroup do
+describe GutData::UserGroup do
   before(:all) do
     @bulk_size = 3
 
@@ -36,7 +36,7 @@ describe GoodData::UserGroup do
 
   describe '#[]' do
     it 'Should list user groups as Array' do
-      res = GoodData::UserGroup[:all, :client => @client, :project => @project]
+      res = GutData::UserGroup[:all, :client => @client, :project => @project]
       expect(res).to be_kind_of(Array)
     end
   end
@@ -57,7 +57,7 @@ describe GoodData::UserGroup do
         res = group_members.find do |group_member|
           group_member.uri == user.uri
         end
-        expect(res).to be_a_kind_of(GoodData::Profile)
+        expect(res).to be_a_kind_of(GutData::Profile)
       end
     end
   end

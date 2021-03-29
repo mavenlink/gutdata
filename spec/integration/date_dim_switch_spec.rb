@@ -9,7 +9,7 @@ require 'gutdata'
 describe "Swapping a date dimension and exchanging all attributes/elements", :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper::create_default_connection
-    @blueprint = GoodData::Model::ProjectBlueprint.build("My project from blueprint") do |p|
+    @blueprint = GutData::Model::ProjectBlueprint.build("My project from blueprint") do |p|
       p.add_date_dimension('created_on')
       p.add_date_dimension('created_on_2')
 
@@ -101,7 +101,7 @@ describe "Swapping a date dimension and exchanging all attributes/elements", :co
     expect(as.pmapcat {|a| a.usedby('dashboard')}).to be_empty
 
     # replace values
-    mapping = GoodData::Helpers.prepare_mapping(suggest_mapping('created_on', 'created_on_2', @project), project: @project)
+    mapping = GutData::Helpers.prepare_mapping(suggest_mapping('created_on', 'created_on_2', @project), project: @project)
     @project.replace_from_mapping(mapping)
 
     # Check if any of the attributes is used by any of the objects. All should be empty
@@ -121,15 +121,15 @@ describe "Swapping a date dimension and exchanging all attributes/elements", :co
     @report_with_private.execute
 
     # Labels 
-    GoodData::SmallGoodZilla.get_uris(@metric_2.expression)
+    GutData::SmallGoodZilla.get_uris(@metric_2.expression)
     expect(@report.definition.attributes.map(&:identifier)).to eq ["created_on_2.quarter"]
-    ids = GoodData::SmallGoodZilla.get_uris(@report.definition.filters.first).map { |x| x.split('/')[-2..-1].join('/') }
+    ids = GutData::SmallGoodZilla.get_uris(@report.definition.filters.first).map { |x| x.split('/')[-2..-1].join('/') }
     expect(ids).to eq ["obj/2286", "2286/elements?id=2015", "2286/elements?id=2016"]
 
-    ids = GoodData::SmallGoodZilla.get_uris(@report.definition.filters.first).map { |x| x.split('/')[-2..-1].join('/') }
+    ids = GutData::SmallGoodZilla.get_uris(@report.definition.filters.first).map { |x| x.split('/')[-2..-1].join('/') }
     expect(ids).to eq ["obj/2286", "2286/elements?id=2015", "2286/elements?id=2016"]
 
-    ids = GoodData::SmallGoodZilla.get_uris(@variable.values.first.expression).map {|v| v.split('/')[-2..-1].join('/')}
+    ids = GutData::SmallGoodZilla.get_uris(@variable.values.first.expression).map {|v| v.split('/')[-2..-1].join('/')}
     expect(ids).to eq ["obj/2286", "2286/elements?id=2015", "2286/elements?id=2016"]
 
     # Swap the dims

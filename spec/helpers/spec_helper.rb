@@ -4,7 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-module GoodData::Helpers
+module GutData::Helpers
   module SpecHelper
     class << self
       def random_choice(possibilities, current_value)

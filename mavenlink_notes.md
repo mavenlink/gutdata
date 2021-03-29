@@ -142,3 +142,10 @@ Search for "require 'gooddata"
 128 results in 94 files
 Replace with "require 'gutdata"
 
+Search for "GoodData"
+1001 results in 316 files (exclude this file)
+Replace all with "GutData"
+
+Search for "Copyright (c) 2010-2015 GutData Corporation. All rights reserved."
+310 results in 310 files (exclude this file)
+Replace all with "Copyright (c) 2010-2015 GoodData Corporation. All rights reserved."

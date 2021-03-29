@@ -67,7 +67,7 @@ COLUMN_BASED_DATA_WITH_HEADERS_AND_EMPTY_VAL = [
 
 describe "DSL" do
   it "should pick the values from row based file" do
-    results = GoodData::UserFilterBuilder::get_values(ROW_BASED_DATA, {
+    results = GutData::UserFilterBuilder::get_values(ROW_BASED_DATA, {
       :labels => [{:label => "label/34"}]
     })
     results.should == {
@@ -82,7 +82,7 @@ describe "DSL" do
   end
 
   it "should pick the values from column based file" do
-    results = GoodData::UserFilterBuilder::get_values(COLUMN_BASED_DATA_WITH_HEADERS, {
+    results = GutData::UserFilterBuilder::get_values(COLUMN_BASED_DATA_WITH_HEADERS, {
       :type => :filter,
       :user_column => :login,
       :labels => [{:label => "label/34", :column => :country}]
@@ -99,7 +99,7 @@ describe "DSL" do
   end
 
   it "should pick the values from column based file with multiple columns" do
-    results = GoodData::UserFilterBuilder::get_values(COLUMN_BASED_DATA_WITH_HEADERS, {
+    results = GutData::UserFilterBuilder::get_values(COLUMN_BASED_DATA_WITH_HEADERS, {
       :type => :filter,
       :user_column => :login,
       :labels => [{:label => "label/34", :column => :country}, {:label => "label/99", :column => :age}]
@@ -119,7 +119,7 @@ describe "DSL" do
   end
 
   it "should process end to end" do
-    result = GoodData::UserFilterBuilder::get_filters(COLUMN_BASED_DATA_WITH_HEADERS, {
+    result = GutData::UserFilterBuilder::get_filters(COLUMN_BASED_DATA_WITH_HEADERS, {
       :user_column => :login,
       :labels => [{:label => {:uri => "label/34"}, :column => :country}, {:label => {:uri => "label/99"}, :column => :age}]
     })
@@ -142,7 +142,7 @@ describe "DSL" do
   end
 
   it "should process end to end nil value should be ignored" do
-    result = GoodData::UserFilterBuilder::get_filters(COLUMN_BASED_DATA_WITH_HEADERS_AND_NIL_VAL, {
+    result = GutData::UserFilterBuilder::get_filters(COLUMN_BASED_DATA_WITH_HEADERS_AND_NIL_VAL, {
       :user_column => :login,
       :labels => [{:label => {:uri => "label/34"}, :column => :country}, {:label => {:uri => "label/99"}, :column => :age}]
     })
@@ -165,7 +165,7 @@ describe "DSL" do
   end
 
   it "should process end to end nil value should be ignored" do
-    result = GoodData::UserFilterBuilder::get_filters(COLUMN_BASED_DATA_WITH_HEADERS_AND_EMPTY_VAL, {
+    result = GutData::UserFilterBuilder::get_filters(COLUMN_BASED_DATA_WITH_HEADERS_AND_EMPTY_VAL, {
       :user_column => :login,
       :labels => [{:label => {:uri => "label/34"}, :column => :country}, {:label => {:uri => "label/99"}, :column => :age}]
     })
@@ -201,7 +201,7 @@ describe "DSL" do
         {:label=>"label/99", :values=>[1]}
       ]
     }
-    result = GoodData::UserFilterBuilder.reduce_results(data)
+    result = GutData::UserFilterBuilder.reduce_results(data)
     result.should == [{:login=>"tomas",
       :filters=>
        [{:label=>"label/34", :values=>["US", "KZ"], :over => nil, :to => nil},
@@ -219,7 +219,7 @@ describe "DSL" do
       {:label=>"label/99", :values=>[18]},
       {:label=>"label/99", :values=>[20]}
     ]
-    result = GoodData::UserFilterBuilder.collect_labels(data)
+    result = GutData::UserFilterBuilder.collect_labels(data)
     result.should == [{:label=>"label/34", :values=>["US", "KZ"], :over => nil, :to => nil},
      {:label=>"label/99", :values=>[18, 20], :over => nil, :to => nil}]
     
@@ -230,7 +230,7 @@ describe "DSL" do
       {:label=>"label/34", :values=>["US"]},
       {:label=>"label/34", :values=>["KZ"]}
     ]
-    results = GoodData::UserFilterBuilder.collect_values(data)
+    results = GutData::UserFilterBuilder.collect_values(data)
     results.should == ["US", "KZ"]
   end
 

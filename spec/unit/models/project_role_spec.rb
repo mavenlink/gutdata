@@ -7,7 +7,7 @@
 require 'gutdata/models/project'
 require 'gutdata/models/project_role'
 
-describe GoodData::ProjectRole do
+describe GutData::ProjectRole do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @project = ProjectHelper.get_default_project(:client => @client)
@@ -20,16 +20,16 @@ describe GoodData::ProjectRole do
   end
 
   describe '#author' do
-    it 'Returns author as GoodData::Profile' do
+    it 'Returns author as GutData::Profile' do
       res = @role.author
-      expect(res).to be_an_instance_of(GoodData::Profile)
+      expect(res).to be_an_instance_of(GutData::Profile)
     end
   end
 
   describe '#contributor' do
-    it 'Returns contributor as GoodData::Profile' do
+    it 'Returns contributor as GutData::Profile' do
       res = @role.contributor
-      expect(res).to be_an_instance_of(GoodData::Profile)
+      expect(res).to be_an_instance_of(GutData::Profile)
     end
   end
 
@@ -83,12 +83,12 @@ describe GoodData::ProjectRole do
   end
 
   describe '#users' do
-    it 'Returns users as Array<GoodData::Profile>'
-    # it 'Returns users as Array<GoodData::Profile>' do
+    it 'Returns users as Array<GutData::Profile>'
+    # it 'Returns users as Array<GutData::Profile>' do
     #   res = @role.users
     #   expect(res).to be_an_instance_of(Array)
     #   res.each do |user|
-    #     expect(user).to be_an_instance_of(GoodData::Profile)
+    #     expect(user).to be_an_instance_of(GutData::Profile)
     #   end
     # end
   end

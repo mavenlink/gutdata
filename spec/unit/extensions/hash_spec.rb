@@ -14,7 +14,7 @@ describe Hash do
         }
       }
       y = x.dup
-      deep_y = GoodData::Helpers.deep_dup(x)
+      deep_y = GutData::Helpers.deep_dup(x)
 
       y[:a].object_id.should === x[:a].object_id
       deep_y[:a].object_id.should_not === x[:a].object_id

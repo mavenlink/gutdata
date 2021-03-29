@@ -8,8 +8,8 @@ require 'gutdata/bricks/brick'
 require 'gutdata/bricks/bricks'
 require 'gutdata/bricks/middleware/stdout_middleware'
 
-  describe GoodData::Bricks::STDOUTLoggingMiddleware do
-  it "Has GoodData::Bricks::STDOUTLoggingMiddleware class" do
-    GoodData::Bricks::STDOUTLoggingMiddleware.should_not == nil
+  describe GutData::Bricks::STDOUTLoggingMiddleware do
+  it "Has GutData::Bricks::STDOUTLoggingMiddleware class" do
+    GutData::Bricks::STDOUTLoggingMiddleware.should_not == nil
   end
 end

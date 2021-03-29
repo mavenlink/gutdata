@@ -6,13 +6,13 @@
 
 require 'gutdata'
 
-describe GoodData::Model::DatasetBlueprint do
+describe GutData::Model::DatasetBlueprint do
 
   before(:each) do
     @model_view = MultiJson.load(File.read('./spec/data/wire_models/model_view.json'))
-    @blueprint = GoodData::Model::FromWire.from_wire(@model_view)
+    @blueprint = GutData::Model::FromWire.from_wire(@model_view)
     @dataset = @blueprint.datasets('dataset.opportunityanalysis')
-    @small_blueprint = GoodData::Model::ProjectBlueprint.build('my_bp') do |p|
+    @small_blueprint = GutData::Model::ProjectBlueprint.build('my_bp') do |p|
       p.add_dataset('dataset.countries') do |d|
         d.add_anchor('attr.country')
         d.add_label('label.country.name', reference: 'attr.country')

@@ -6,7 +6,7 @@
 
 require 'securerandom'
 
-module GoodData::Helpers
+module GutData::Helpers
   module CryptoHelper
     class << self
       def generate_password

@@ -270,11 +270,11 @@ Build command-suite CLI apps that are awesome.  Bootstrap your app, add commands
 
 <a name="gooddata"></a>
 ### <a href="http://github.com/gooddata/gooddata-ruby">gooddata</a> v0.6.24 (default)
-#### A convenient Ruby wrapper around the GoodData RESTful API
+#### A convenient Ruby wrapper around the GutData RESTful API
 
 <a href="http://en.wikipedia.org/wiki/BSD_licenses#4-clause_license_.28original_.22BSD_License.22.29">BSD</a> whitelisted
 
-Use the GoodData::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.
+Use the GutData::Client class to integrate GutData into your own application or use the CLI to work with GutData directly from the command line.
 
 <a name="guard"></a>
 ### <a href="http://guardgem.org">guard</a> v2.13.0 (development)

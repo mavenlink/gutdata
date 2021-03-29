@@ -24,7 +24,7 @@ describe "Object export between projects", :constraint => 'slow' do
   end
 
   it "should transfer a metric" do
-    f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @source_project)
+    f = GutData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @source_project)
     metric_title = "Testing metric to be exported"
     metric = @source_project.create_metric("SELECT SUM(#\"#{f.title}\")", :title => metric_title)
     metric.save
@@ -34,7 +34,7 @@ describe "Object export between projects", :constraint => 'slow' do
     @source_project.partial_md_export(metric, :project => @target_project)
 
     expect(@target_project.metrics.count).to eq 1
-    metric = GoodData::Metric.find_first_by_title(metric_title, :client => @client, :project => @target_project)
+    metric = GutData::Metric.find_first_by_title(metric_title, :client => @client, :project => @target_project)
     expect(metric).not_to be_nil
     expect(metric.title).to eq metric_title
   end

@@ -8,7 +8,7 @@ require 'gutdata/models/profile'
 require 'gutdata/models/domain'
 require 'gutdata/models/project'
 
-describe 'GoodData::Schedule::Params' do
+describe 'GutData::Schedule::Params' do
   before(:all) do
     @deploy_dir = File.join(File.dirname(__FILE__), '..', '..', 'data/cc')
     @graph_path = 'graph.grf'

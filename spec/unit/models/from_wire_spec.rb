@@ -6,9 +6,9 @@
 
 require 'gutdata'
 
-include GoodData::Model
+include GutData::Model
 
-describe GoodData::Model::FromWire do
+describe GutData::Model::FromWire do
 
   before(:each) do
     @model_view = MultiJson.load(File.read('./spec/data/wire_models/model_view.json'))
@@ -199,7 +199,7 @@ describe GoodData::Model::FromWire do
   describe '#parse_facts' do
     it 'should be able to parse facts from dataset' do
       model = @model_view['projectModelView']['model']['projectModel']['datasets'].first
-      facts = GoodData::Model::FromWire.parse_facts(model)
+      facts = GutData::Model::FromWire.parse_facts(model)
       expect(facts.to_set).to eq Set.new([
         {
           type: :fact,
@@ -237,7 +237,7 @@ describe GoodData::Model::FromWire do
   describe '#parse_dataset' do
     it 'should be able to parse dataset' do
       model_view = MultiJson.load(File.read('./spec/data/wire_models/nu_model.json'))
-      dataset = GoodData::Model::FromWire.dataset_from_wire(model_view['projectModelView']['model']['projectModel']['datasets'].first)
+      dataset = GutData::Model::FromWire.dataset_from_wire(model_view['projectModelView']['model']['projectModel']['datasets'].first)
       expect(dataset).to have_key(:type)
       expect(dataset[:type]).to eq :dataset
       expect(dataset[:id]).to eq 'dataset.bookingsactual'
@@ -251,7 +251,7 @@ describe GoodData::Model::FromWire do
   describe '#from_wire' do
     it 'should be able to parse dataset' do
       model_view = MultiJson.load(File.read('./spec/data/wire_models/nu_model.json'))
-      bp = GoodData::Model::FromWire.from_wire(model_view)
+      bp = GutData::Model::FromWire.from_wire(model_view)
     end
   end
 
@@ -274,22 +274,22 @@ describe GoodData::Model::FromWire do
   end
 
   it "should validate a gd_type" do
-    expect(GoodData::Model.check_gd_type("GDC.time")).to eq true
-    expect(GoodData::Model.check_gd_type("gdc.time")).to eq false
-    expect(GoodData::Model.check_gd_type("gdc.time3")).to eq false
+    expect(GutData::Model.check_gd_type("GDC.time")).to eq true
+    expect(GutData::Model.check_gd_type("gdc.time")).to eq false
+    expect(GutData::Model.check_gd_type("gdc.time3")).to eq false
   end
 
   it "should validate a gd_datatype" do
-    expect(GoodData::Model.check_gd_data_type("INT")).to eq true
-    expect(GoodData::Model.check_gd_data_type("int")).to eq true
-    expect(GoodData::Model.check_gd_data_type("VARCHAR(128)")).to eq true
-    expect(GoodData::Model.check_gd_data_type("varchar(128)")).to eq true
-    expect(GoodData::Model.check_gd_data_type("DECIMAL(10, 5)")).to eq true
-    expect(GoodData::Model.check_gd_data_type("DECIMAL(10,5)")).to eq true
-    expect(GoodData::Model.check_gd_data_type("DECIMAL(10,  5)")).to eq true
-    expect(GoodData::Model.check_gd_data_type("decimal(10, 5)")).to eq true
-    expect(GoodData::Model.check_gd_data_type("decimal(10,5)")).to eq true
-    expect(GoodData::Model.check_gd_data_type("decimal(10,  5)")).to eq true
+    expect(GutData::Model.check_gd_data_type("INT")).to eq true
+    expect(GutData::Model.check_gd_data_type("int")).to eq true
+    expect(GutData::Model.check_gd_data_type("VARCHAR(128)")).to eq true
+    expect(GutData::Model.check_gd_data_type("varchar(128)")).to eq true
+    expect(GutData::Model.check_gd_data_type("DECIMAL(10, 5)")).to eq true
+    expect(GutData::Model.check_gd_data_type("DECIMAL(10,5)")).to eq true
+    expect(GutData::Model.check_gd_data_type("DECIMAL(10,  5)")).to eq true
+    expect(GutData::Model.check_gd_data_type("decimal(10, 5)")).to eq true
+    expect(GutData::Model.check_gd_data_type("decimal(10,5)")).to eq true
+    expect(GutData::Model.check_gd_data_type("decimal(10,  5)")).to eq true
   end
 
   it "should be able to parse description from both attributes and facts" do

@@ -15,14 +15,14 @@ WebMock.disable!
 
 require_relative 'environment/environment'
 
-GoodData::Environment.load
+GutData::Environment.load
 
 base = Pathname(__FILE__).dirname.expand_path
 Dir.glob(base + 'helpers/*_helper.rb').each do |file|
   require file
 end
 
-include GoodData::Helpers
+include GutData::Helpers
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
@@ -47,7 +47,7 @@ RSpec.configure do |config|
     # TODO: Move this to some method.
     # TODO Make more intelligent so two test suites can run at the same time.
     # ConnectionHelper.create_default_connection
-    # users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN)
+    # users = GutData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN)
     # users.pmap do |user|
     #   user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
     # end
@@ -56,8 +56,8 @@ RSpec.configure do |config|
     # $stdout.sync=true
     # $stderr.sync=true
 
-    GoodData.logging_off
-    GoodData.stats_off
+    GutData.logging_off
+    GutData.stats_off
   end
 
   config.after(:all) do
@@ -66,7 +66,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     # TODO: Setup test project
-    GoodData.logging_off
+    GutData.logging_off
   end
 
   config.after(:suite) do

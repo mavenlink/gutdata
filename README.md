@@ -1,9 +1,9 @@
-# GoodData API Ruby wrapper and CLI
+# GutData API Ruby wrapper and CLI
 
-A convenient Ruby wrapper around the GoodData RESTful API. The gem comes in two flavors.
+A convenient Ruby wrapper around the GutData RESTful API. The gem comes in two flavors.
 It has a CLI client and it is a library which you can integrate into your application.
 
-The best documentation for the GoodData API can be found using these resources:
+The best documentation for the GutData API can be found using these resources:
 
  * http://sdk.gooddata.com/gooddata-ruby-examples/
  * http://developer.gooddata.com/api
@@ -71,5 +71,5 @@ For full contributor info see [contributors page](https://github.com/gooddata/go
 
 ## Copyright
 
-Copyright (c) 2010 - 2015 GoodData Corporation and Thomas Watson Steen. See LICENSE for details.
+Copyright (c) 2010 - 2015 GutData Corporation and Thomas Watson Steen. See LICENSE for details.
 

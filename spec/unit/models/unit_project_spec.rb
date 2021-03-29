@@ -6,13 +6,13 @@
 
 require 'gutdata'
 
-describe GoodData::Project do
+describe GutData::Project do
   before(:all) do
     @client = ConnectionHelper::create_default_connection
-    @p = GoodData::Project.create_object(title: 'a', client: @client)
+    @p = GutData::Project.create_object(title: 'a', client: @client)
     @domain = @client.domain('dummy_domain')
     @roles = [
-      GoodData::ProjectRole.create_object(title: 'Test Role',
+      GutData::ProjectRole.create_object(title: 'Test Role',
                                           summary: 'Test role summary',
                                           identifier: 'test_role',
                                           uri: '/roles/1',
@@ -20,7 +20,7 @@ describe GoodData::Project do
                                             "canManageFact" => "1",
                                             "canListInvitationsInProject" => "1"
                                           }),
-      GoodData::ProjectRole.create_object(title: 'Test Role 2',
+      GutData::ProjectRole.create_object(title: 'Test Role 2',
                                           summary: 'Test role 2 summary',
                                           identifier: 'test_role_2',
                                           uri: '/roles/2',
@@ -29,11 +29,11 @@ describe GoodData::Project do
                                           })
     ]
     @domain_members = [
-      GoodData::Profile.create_object(login: 'john.doe+in_domain@gooddata.com', uri: '/uri/john_domain'),
+      GutData::Profile.create_object(login: 'john.doe+in_domain@gooddata.com', uri: '/uri/john_domain'),
     ]
     @members = [
-      GoodData::Membership.create(login: 'john.doe@goodadta.com', uri: '/uri/john'),
-      GoodData::Membership.create(login: 'jane.doe@goodadta.com', uri: '/uri/jane')
+      GutData::Membership.create(login: 'john.doe@goodadta.com', uri: '/uri/john'),
+      GutData::Membership.create(login: 'jane.doe@goodadta.com', uri: '/uri/jane')
     ]
   end
 

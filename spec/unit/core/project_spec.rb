@@ -8,7 +8,7 @@ require 'gutdata/connection'
 require 'gutdata/core/project'
 require 'gutdata/models/project'
 
-describe 'GoodData - project' do
+describe 'GutData - project' do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
   end
@@ -19,35 +19,35 @@ describe 'GoodData - project' do
 
   describe '#project=' do
     it 'Assigns nil' do
-      GoodData.project = nil
+      GutData.project = nil
     end
 
     it 'Assigns project using project ID' do
-      GoodData.use(ProjectHelper::PROJECT_ID, client: @client)
+      GutData.use(ProjectHelper::PROJECT_ID, client: @client)
     end
 
     it 'Assigns project using project URL' do
-      GoodData.use ProjectHelper::PROJECT_URL, client: @client
+      GutData.use ProjectHelper::PROJECT_URL, client: @client
     end
 
     it 'Assigns project directly' do
-      GoodData.project = GoodData::Project[ProjectHelper::PROJECT_ID, client: @client]
+      GutData.project = GutData::Project[ProjectHelper::PROJECT_ID, client: @client]
     end
   end
 
   describe '#project' do
     it 'Returns project assigned' do
-      GoodData.project = nil
-      GoodData.project.should == nil
+      GutData.project = nil
+      GutData.project.should == nil
 
-      GoodData.use ProjectHelper::PROJECT_ID, client: @client
-      GoodData.project.should_not == nil
+      GutData.use ProjectHelper::PROJECT_ID, client: @client
+      GutData.project.should_not == nil
     end
   end
 
   describe '#with_project' do
     it 'Uses project specified' do
-      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID, :client => @client] do
+      GutData.with_project GutData::Project[ProjectHelper::PROJECT_ID, :client => @client] do
       end
     end
   end

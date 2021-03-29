@@ -7,11 +7,11 @@
 require 'gutdata/models/segment'
 require 'securerandom'
 
-describe GoodData::Segment do
+describe GutData::Segment do
   TOKEN = 'mustangs'
 
   before(:all) do
-    @client = GoodData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false )
+    @client = GutData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false )
     @domain = @client.domain('mustangs')
   end
 
@@ -40,8 +40,8 @@ describe GoodData::Segment do
     it 'Returns specific segment when segment ID passed' do
       s = @domain.segments(@segment_name)
       @segment.uri == s.uri
-      expect(s).to be_an_instance_of(GoodData::Segment)
-      expect(@segment).to be_an_instance_of(GoodData::Segment)
+      expect(s).to be_an_instance_of(GutData::Segment)
+      expect(@segment).to be_an_instance_of(GutData::Segment)
     end
   end
 
@@ -79,7 +79,7 @@ describe GoodData::Segment do
       begin
         client_project = @client.create_project(title: 'client_1 project', auth_token: TOKEN)
         segment_client = @segment.create_client(id: 'tenant_1', project: client_project)
-        expect(segment_client).to be_an_instance_of(GoodData::Client)
+        expect(segment_client).to be_an_instance_of(GutData::Client)
         expect(@segment.clients.count).to eq 1
       ensure
         segment_client && segment_client.delete
@@ -91,7 +91,7 @@ describe GoodData::Segment do
     it 'can create a new client in a segment without project and then provision' do
       begin
         segment_client = @segment.create_client(id: 'tenant_1')
-        expect(segment_client).to be_an_instance_of(GoodData::Client)
+        expect(segment_client).to be_an_instance_of(GutData::Client)
         expect(@segment.clients.count).to eq 1
         @domain.synchronize_clients
         @domain.provision_client_projects

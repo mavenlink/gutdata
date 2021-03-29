@@ -10,11 +10,11 @@ require_relative 'process_helper'
 
 require_relative '../environment/environment'
 
-GoodData::Environment.load
+GutData::Environment.load
 
-module GoodData::Helpers
+module GutData::Helpers
   module ScheduleHelper
-    include GoodData::Environment::ScheduleHelper
+    include GutData::Environment::ScheduleHelper
 
     class << self
       def remove_old_schedules(project)

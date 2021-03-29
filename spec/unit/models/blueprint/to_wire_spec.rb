@@ -6,13 +6,13 @@
 
 require 'gutdata'
 
-include GoodData::Model
+include GutData::Model
 
-describe GoodData::Model::ProjectBlueprint do
+describe GutData::Model::ProjectBlueprint do
 
   before(:each) do
     @spec = JSON.parse(File.read("./spec/data/blueprints/big_blueprint_not_pruned.json"), :symbolize_names => true)
-    @blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+    @blueprint = GutData::Model::ProjectBlueprint.new(@spec)
     @wire_spec = JSON.parse(File.read("./spec/data/wire_models/model_view.json"), :symbolize_names => true)
   end
 

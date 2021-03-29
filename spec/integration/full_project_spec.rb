@@ -11,8 +11,8 @@ describe "Full project implementation", :constraint => 'slow' do
     @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
     @invalid_spec = JSON.parse(File.read("./spec/data/blueprints/invalid_blueprint.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
-    @blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
-    @invalid_blueprint = GoodData::Model::ProjectBlueprint.new(@invalid_spec)
+    @blueprint = GutData::Model::ProjectBlueprint.new(@spec)
+    @invalid_blueprint = GutData::Model::ProjectBlueprint.new(@invalid_spec)
 
     @project = @client.create_project_from_blueprint(@blueprint, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
   end
@@ -26,11 +26,11 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should not build an invalid model" do
     expect {
       @client.create_project_from_blueprint(@invalid_spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
-    }.to raise_error(GoodData::ValidationError)
+    }.to raise_error(GutData::ValidationError)
   end
 
   it "should do nothing if the project is updated with the same blueprint" do
-    results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
+    results = GutData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
     expect(results).to be_nil
   end
 
@@ -40,19 +40,19 @@ describe "Full project implementation", :constraint => 'slow' do
     dataset.save
 
     # Now the update of project using the original blueprint should offer update of the title. Nothing else.
-    results = GoodData::Model::ProjectCreator.migrate_datasets(@blueprint, project: @project, client: @client, dry_run: true)
-    results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
+    results = GutData::Model::ProjectCreator.migrate_datasets(@blueprint, project: @project, client: @client, dry_run: true)
+    results = GutData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
     expect(results['updateScript']['maqlDdl']).to eq "ALTER DATASET {dataset.repos} VISUAL(TITLE \"Repositories\", DESCRIPTION \"\");\n"
 
     # Update using a freshly gained blueprint should offer no changes.
     new_blueprint = @project.blueprint
-    results = GoodData::Model::ProjectCreator.migrate_datasets(new_blueprint, project: @project, client: @client, dry_run: true)
+    results = GutData::Model::ProjectCreator.migrate_datasets(new_blueprint, project: @project, client: @client, dry_run: true)
     expect(results).to be_nil
 
     # When we change the model using the original blueprint. Basically change the title back.
     results = @project.update_from_blueprint(@spec)
     # It should offer no changes using the original blueprint
-    results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
+    results = GutData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
     expect(results).to be_nil
   end
 
@@ -96,8 +96,8 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should load the data" do
-    GoodData.with_project(@project) do |p|
-      # blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+    GutData.with_project(@project) do |p|
+      # blueprint = GutData::Model::ProjectBlueprint.new(@spec)
       commits_data = [
         ["lines_changed","committed_on","dev_id","repo_id"],
         [1,"01/01/2014",1,1],
@@ -115,8 +115,8 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "it silently ignores extra columns" do
-    GoodData.with_project(@project) do |p|
-      blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+    GutData.with_project(@project) do |p|
+      blueprint = GutData::Model::ProjectBlueprint.new(@spec)
       commits_data = [
         ["lines_changed","committed_on","dev_id","repo_id", "extra_column"],
         [1,"01/01/2014",1,1,"something"],
@@ -129,8 +129,8 @@ describe "Full project implementation", :constraint => 'slow' do
 
   context "it should give you a reasonable error message" do
     it "if you omit a column" do
-      GoodData.with_project(@project) do |p|
-        blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+      GutData.with_project(@project) do |p|
+        blueprint = GutData::Model::ProjectBlueprint.new(@spec)
         commits_data = [
           ["lines_changed","committed_on","dev_id"],
           [1,"01/01/2014",1],
@@ -141,8 +141,8 @@ describe "Full project implementation", :constraint => 'slow' do
       end
     end
     it "if you give it a malformed CSV" do
-      GoodData.with_project(@project) do |p|
-        blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+      GutData.with_project(@project) do |p|
+        blueprint = GutData::Model::ProjectBlueprint.new(@spec)
         # 4 cols in header but not in the data
         commits_data = [
           ["lines_changed","committed_on","dev_id","repo_id"],
@@ -154,8 +154,8 @@ describe "Full project implementation", :constraint => 'slow' do
       end
     end
     it "if you give it wrong date format" do
-      GoodData.with_project(@project) do |p|
-        blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+      GutData.with_project(@project) do |p|
+        blueprint = GutData::Model::ProjectBlueprint.new(@spec)
         commits_data = [
           ["lines_changed","committed_on","dev_id","repo_id"],
           [1,"01/01/2014",1,1],
@@ -234,7 +234,7 @@ describe "Full project implementation", :constraint => 'slow' do
     r = @project.create_report(top: [m], title: 'xy')
     expect(r.definitions.count).to eq 1
 
-    rd = GoodData::ReportDefinition.create(:top => [m], :client => @client, :project => @project)
+    rd = GutData::ReportDefinition.create(:top => [m], :client => @client, :project => @project)
     rd.save
     r.add_definition(rd)
     r.save
@@ -248,9 +248,9 @@ describe "Full project implementation", :constraint => 'slow' do
     rd = r.latest_report_definition
     rd.content['chart'] = { 'styles' => { 'global' => { 'colorMapping' => 1 } } }
 
-    expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => 1 })
+    expect(GutData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => 1 })
     rd.reset_color_mapping!
-    expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => [] })
+    expect(GutData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => [] })
     r.delete
     res = m.used_by
     res.each do |dependency|
@@ -294,7 +294,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be possible to get all metrics with full objects" do
     metrics = @project.metrics(:all)
-    expect(metrics.first.class).to be GoodData::Metric
+    expect(metrics.first.class).to be GutData::Metric
   end
 
   it "should be able to get a metric by identifier" do
@@ -329,7 +329,7 @@ describe "Full project implementation", :constraint => 'slow' do
     fact2 = @project.facts(fact1.identifier)
     fact3 = @project.facts(fact2.obj_id)
     fact4 = @project.facts(fact3.uri)
-    fact5 = @client.create(GoodData::Fact, fact4)
+    fact5 = @client.create(GutData::Fact, fact4)
 
     # All should be the same
     expect(fact1).to eq fact2
@@ -369,7 +369,7 @@ describe "Full project implementation", :constraint => 'slow' do
     fact.tags = "tag1 tag2 tag3"
     fact.save
 
-    tagged_facts = GoodData::Fact.find_by_tag('tag3', :client => @client, :project => @project)
+    tagged_facts = GutData::Fact.find_by_tag('tag3', :client => @client, :project => @project)
     expect(tagged_facts.count).to eq 1
   end
 

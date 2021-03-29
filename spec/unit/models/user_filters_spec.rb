@@ -22,7 +22,7 @@ end
 describe 'User filters implementation' do
 
   it "should create user filters from a file using row based approach" do
-    filters = GoodData::UserFilterBuilder::get_filters('./spec/data/line_based_permissions.csv', {
+    filters = GutData::UserFilterBuilder::get_filters('./spec/data/line_based_permissions.csv', {
         :labels => [
           {:label => "/gdc/md/lu292gm1077gtv7i383hjl149sva7o1e/obj/2719"},
         ]
@@ -31,7 +31,7 @@ describe 'User filters implementation' do
   end
 
   it "should create user filters from a file using column based approach" do
-    filters = GoodData::UserFilterBuilder::get_filters('./spec/data/column_based_permissions.csv', {
+    filters = GutData::UserFilterBuilder::get_filters('./spec/data/column_based_permissions.csv', {
         :labels => [
           {:label => "/gdc/md/lu292gm1077gtv7i383hjl149sva7o1e/obj/2719", :column => 'region'},
         ]
@@ -40,7 +40,7 @@ describe 'User filters implementation' do
   end
 
   it "should treat empty like nil, empty value has to be enclosed in quotes" do
-    filters = GoodData::UserFilterBuilder::get_filters('./spec/data/column_based_permissions.csv', {
+    filters = GutData::UserFilterBuilder::get_filters('./spec/data/column_based_permissions.csv', {
         :labels => [
           {:label => "some_label", :column => 'region'},
           {:label => "other_label", :column => 'department'}
@@ -50,7 +50,7 @@ describe 'User filters implementation' do
   end
 
   it "should be able to specify columns by number" do
-    filters = GoodData::UserFilterBuilder::get_filters('./spec/data/column_based_permissions2.csv', {
+    filters = GutData::UserFilterBuilder::get_filters('./spec/data/column_based_permissions2.csv', {
       :user_column => 2,
       :labels => [
         {:label => "some_label", :column => 0},
@@ -61,7 +61,7 @@ describe 'User filters implementation' do
   end
 
   it "should be able to specify columns by name" do
-    filters = GoodData::UserFilterBuilder::get_filters('./spec/data/column_based_permissions2.csv', {
+    filters = GutData::UserFilterBuilder::get_filters('./spec/data/column_based_permissions2.csv', {
       :user_column => 'login',
       :labels => [
         {:label => 'some_label', :column => 'region'},
@@ -80,7 +80,7 @@ describe 'User filters implementation' do
         "jirka@gooddata.com"
       ]
     ]
-    GoodData::UserFilterBuilder.normalize_filters(filters).should == [
+    GutData::UserFilterBuilder.normalize_filters(filters).should == [
       {
         :login =>"svarovsky+gem_tester@gooddata.com",
         :filters => [

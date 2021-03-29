@@ -1,4 +1,4 @@
-# GoodData Ruby SDK Changelog
+# GutData Ruby SDK Changelog
 
 ## 0.6.24
 - Fixed problem with validElements causing 500
@@ -9,7 +9,7 @@
 ## 0.6.22
 - Added rake task (license:add) for automatic license headers generating
 - Handle situation when upload_status.json does not exist
-- Connect using SSO - GoodData#connect_sso
+- Connect using SSO - GutData#connect_sso
 - Added Measure semantics, alias methods metrics to measure (ie. interpolate_metric -> interpolate_measure)
 - rake tasks license:check, license:report & license:info for automated license reporting added
 - Fixed a typo in labels
@@ -21,8 +21,8 @@
 - Included date_facts in building a manifest
 - Using API for user provisioning by login
 - Multiple data sets upload Project#upload_multiple
-- GoodData::MdObject.json is assignable now (using attr_accessor)
-- Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
+- GutData::MdObject.json is assignable now (using attr_accessor)
+- Added method for updating report definition in easy way - GutData::Report#update_definiton(opts, &block)
 - Added more logging around connecting to server. Cleaning up staging information. Adding tests to make
 - Middlewares are transforming params to Ruby hash (useful for executors when they pass Java Hash instance)
 - Cleaning up way Data permissions work with errors so we can update Bricks
@@ -67,7 +67,7 @@
 - added HTTP logging oneliner 
 
 ## 0.6.16
-- fixed SSL certificate validation (verify_ssl option in the GoodData.connect)
+- fixed SSL certificate validation (verify_ssl option in the GutData.connect)
 - logging changes: separated the HTTP and application logging to different levels, added platform request ID
 - fixed the WebDav URI bootstrap to work with the EU datacenter
 - added driver parameter for Vertica based project creation
@@ -105,15 +105,15 @@
 - Automatic client disconnect at_exit of ruby script
 - When creating user login and email can be different now
 - Fixed Domain#add_user (GH issue #354)
-- Support for GoodData.connect ENV['GD_GEM_USER'], ENV['GD_GEM_PASSWORD']
+- Support for GutData.connect ENV['GD_GEM_USER'], ENV['GD_GEM_PASSWORD']
 - Added Schedule#execute(:wait => true|false) option
-- Merge GoodData::Rest::Connection and GoodData::Rest::Connection::RestClientConnection
-- Unified expection handler for REST API and WebDav Access (using GoodData::Rest::Connection.retryable)
-- GoodData#stats_on, GoodData#stats_off, GoodData::Rest::Client#stats_on, GoodData#stats_off
-- GoodData::Mixin::MdObjectQuery#using now accepts :full => true|false option
-- GoodData::MdObject#[] automatically returns proper type (ie. GoodData::Report)
+- Merge GutData::Rest::Connection and GutData::Rest::Connection::RestClientConnection
+- Unified expection handler for REST API and WebDav Access (using GutData::Rest::Connection.retryable)
+- GutData#stats_on, GutData#stats_off, GutData::Rest::Client#stats_on, GutData#stats_off
+- GutData::Mixin::MdObjectQuery#using now accepts :full => true|false option
+- GutData::MdObject#[] automatically returns proper type (ie. GutData::Report)
 - Improved user management
-- Added simple GoodData::Dimension
+- Added simple GutData::Dimension
 
 ## 0.6.11
 

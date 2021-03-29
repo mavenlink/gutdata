@@ -6,7 +6,7 @@
 
 require 'gutdata/models/schedule'
 
-describe GoodData::Execution do
+describe GutData::Execution do
 
   before(:each) do
     @data = {"execution"=>
@@ -20,7 +20,7 @@ describe GoodData::Execution do
         {"self"=>
           "/gdc/projects/tk3b994vmdpcb0xjwexc9moen8t5bpiw/schedules/54f08d1de4b0c9cbdcb0f323/executions/54f090d5e4b0c9cbdcb0f45b"},
        "createdTime"=>"2015-02-27T15:44:21.361Z"}}
-    @execution = GoodData::Execution.new(@data)
+    @execution = GutData::Execution.new(@data)
   end
 
   describe '#created' do
@@ -51,7 +51,7 @@ describe GoodData::Execution do
     it 'returns nil if it is not finished' do
       @data['execution']['status'] = 'RUNNING'
       @data['execution']['endTime'] = nil
-      running_execution = GoodData::Execution.new(@data)
+      running_execution = GutData::Execution.new(@data)
       expect(running_execution.finished).to be_nil
     end
   end
@@ -69,7 +69,7 @@ describe GoodData::Execution do
 
     it 'returns true if executione is currently finished' do
       @data['execution']['status'] = 'RUNNING'
-      running_execution = GoodData::Execution.new(@data)
+      running_execution = GutData::Execution.new(@data)
       expect(running_execution.running?).to be_truthy
     end
   end
@@ -101,7 +101,7 @@ describe GoodData::Execution do
     it 'returns nil if it is not finished' do
       @data['execution']['status'] = 'RUNNING'
       @data['execution']['endTime'] = nil
-      running_execution = GoodData::Execution.new(@data)
+      running_execution = GutData::Execution.new(@data)
       expect(running_execution.duration.class).to eq Float
     end
   end

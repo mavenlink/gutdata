@@ -6,11 +6,11 @@
 
 require 'gutdata'
 
-describe GoodData::Model::ReferenceBlueprintField do
+describe GutData::Model::ReferenceBlueprintField do
 
   before(:each) do
     @model_view = MultiJson.load(File.read('./spec/data/wire_models/model_view.json'))
-    @blueprint = GoodData::Model::FromWire.from_wire(@model_view)
+    @blueprint = GutData::Model::FromWire.from_wire(@model_view)
     @dataset = @blueprint.datasets('dataset.opportunityanalysis')
     @attribute = @dataset.attributes('attr.opportunityanalysis.month')
   end

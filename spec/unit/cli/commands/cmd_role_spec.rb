@@ -6,7 +6,7 @@
 
 require 'gutdata/cli/cli'
 
-describe GoodData::CLI, :broken => true do
+describe GutData::CLI, :broken => true do
   describe 'role' do
     it 'Complains when no parameters specified' do
       args = %w(role)

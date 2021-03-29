@@ -12,7 +12,7 @@ GET request on our API
 tomaskorcak@kx-mac:~/$ gooddata api get /gdc
 {"about"=>
   {"summary"=>"Use links to navigate the services.",
-   "category"=>"GoodData API root",
+   "category"=>"GutData API root",
    "links"=>
     [{"link"=>"/gdc/", "summary"=>"", "category"=>"home", "title"=>"home"},
      {"link"=>"/gdc/account/token",
@@ -73,7 +73,7 @@ Info about the API version etc
    
 ```
 tomaskorcak@kx-mac:~/$ gooddata api info
-GoodData API
+GutData API
   Version: N/A
   Released: N/A
   For more info see N/A
@@ -91,7 +91,7 @@ Store your credentials to ~/.gooddata so client does not have to ask you every s
 
 ```
 tomaskorcak@kx-mac:~/$ gooddata auth store
-Enter your GoodData credentials.
+Enter your GutData credentials.
 Email
 tomas.korcak@gooddata.com
 Password
@@ -374,7 +374,7 @@ drwxr-xr-x  31 tomaskorcak  staff  1054 Apr 22 14:10 ..
 -rw-r--r--   1 tomaskorcak  staff   179 Apr 22 14:10 main.rb
 
 tomaskorcak@kx-mac:~/$ cat mybrick/brick.rb 
-class MyBrick < GoodData::Bricks::Brick
+class MyBrick < GutData::Bricks::Brick
 
     def call(params)
         # do something here
@@ -424,7 +424,7 @@ tomaskorcak@kx-mac:~/$ gooddata user show
    "timezone"=>nil,
    "position"=>nil,
    "authenticationModes"=>[],
-   "companyName"=>"GoodData",
+   "companyName"=>"GutData",
    "login"=>"tomas.korcak@gooddata.com",
    "email"=>"tomas.korcak@gooddata.com",
    "created"=>"2014-03-03 11:28:51",

@@ -6,5 +6,5 @@
 
 require 'gutdata/rest/rest'
 
-describe GoodData::Rest::Resource do
+describe GutData::Rest::Resource do
 end

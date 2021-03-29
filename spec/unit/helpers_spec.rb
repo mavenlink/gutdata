@@ -7,37 +7,37 @@
 require 'gutdata/client'
 require 'gutdata/models/model'
 
-describe GoodData::Helpers do
+describe GutData::Helpers do
   describe '#home_directory' do
     it 'works' do
-      GoodData::Helpers.home_directory
+      GutData::Helpers.home_directory
     end
   end
 
   describe '#running_on_windows?' do
     it 'works' do
-      result = GoodData::Helpers.running_on_windows?
+      result = GutData::Helpers.running_on_windows?
       !!result.should == result
     end
   end
 
   describe '#running_on_mac?' do
     it 'works' do
-      result = GoodData::Helpers.running_on_a_mac?
+      result = GutData::Helpers.running_on_a_mac?
       !!result.should == result
     end
   end
 
   describe '#error' do
     it 'works' do
-      expect { GoodData::Helpers.error('Test Error') }.to raise_error(SystemExit)
+      expect { GutData::Helpers.error('Test Error') }.to raise_error(SystemExit)
     end
   end
 
   describe '#find_goodfile' do
     it 'works' do
       skip "Ask @fluke777 how to create one"
-      GoodData::Helpers.find_goodfile.should_not be_nil
+      GutData::Helpers.find_goodfile.should_not be_nil
     end
   end
 
@@ -55,7 +55,7 @@ describe GoodData::Helpers do
           'deeper' => 'deep value'
         }
       }
-      result = GoodData::Helpers.decode_params(params)
+      result = GutData::Helpers.decode_params(params)
       expect(result).to eq(expected_result)
     end
     it 'decodes the hidden_data in hidden params' do
@@ -72,7 +72,7 @@ describe GoodData::Helpers do
           "deeper_secret" => "hidden value"
         }
       }
-      result = GoodData::Helpers.decode_params(params)
+      result = GutData::Helpers.decode_params(params)
       expect(result).to eq(expected_result)
     end
     it 'throws an error when data params is not a valid json' do
@@ -81,7 +81,7 @@ describe GoodData::Helpers do
         'number_param' => 5,
         'gd_encoded_params' => 'This is no json.'
       }
-      expect { GoodData::Helpers.decode_params(params) }.to raise_error(JSON::ParserError)
+      expect { GutData::Helpers.decode_params(params) }.to raise_error(JSON::ParserError)
     end
   end
 end

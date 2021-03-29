@@ -10,7 +10,7 @@ require 'multi_json'
 # Local requires
 require 'gutdata/models/models'
 
-module GoodData::Helpers
+module GutData::Helpers
   module CsvHelper
     CSV_PATH_EXPORT = 'out.txt'
     CSV_PATH_IMPORT = File.join(File.dirname(__FILE__), '..', 'data', 'users.csv')

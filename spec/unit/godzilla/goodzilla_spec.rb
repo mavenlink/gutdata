@@ -6,7 +6,7 @@
 
 require 'gutdata'
 
-describe GoodData::SmallGoodZilla do
+describe GutData::SmallGoodZilla do
   
   MAQL_EXAMPLE = 'SELECT SUM(#"Amount") WHERE @"Date"=#"X" AND ?"Snapshot EOP"=1'
   FACTS = {
@@ -26,23 +26,23 @@ describe GoodData::SmallGoodZilla do
   }
   
   it "should parse metrics out of the string" do
-    x = GoodData::SmallGoodZilla.get_facts(MAQL_EXAMPLE)
+    x = GutData::SmallGoodZilla.get_facts(MAQL_EXAMPLE)
     x.should == ["Amount", "X"]
   end
 
   it "should parse attributes out of the string" do
-    x = GoodData::SmallGoodZilla.get_attributes(MAQL_EXAMPLE)
+    x = GutData::SmallGoodZilla.get_attributes(MAQL_EXAMPLE)
     x.should == ["Date"]
   end
 
   it "should parse metrics out of the string" do
-    x = GoodData::SmallGoodZilla.get_metrics(MAQL_EXAMPLE)
+    x = GutData::SmallGoodZilla.get_metrics(MAQL_EXAMPLE)
     x.should == ["Snapshot EOP"]
   end
 
   it "should interpolate the values" do
     
-    interpolated = GoodData::SmallGoodZilla.interpolate({
+    interpolated = GutData::SmallGoodZilla.interpolate({
       :facts => ["Amount", "X"],
       :attributes => ["Date"],
       :metrics => ["Snapshot EOP"]
@@ -56,7 +56,7 @@ describe GoodData::SmallGoodZilla do
   end
 
   it "should return interpolated metric" do
-    interpolated = GoodData::SmallGoodZilla.interpolate_metric(MAQL_EXAMPLE, DICT)
+    interpolated = GutData::SmallGoodZilla.interpolate_metric(MAQL_EXAMPLE, DICT)
     interpolated.should == "SELECT SUM([a]) WHERE [d]=[x] AND [snap]=1"
   end
 
@@ -67,7 +67,7 @@ describe GoodData::SmallGoodZilla do
           WHEN ![attr.customer_profiles.profile_id] = [/gdc/md/pxa3aic06undadkc5s7t5lxpne11vgyt/obj/257/elements?id=50] THEN ![fact.perfomance_by_campaign_id.general_score_5]
           WHEN ![attr.customer_profiles.profile_id] = [/gdc/md/pxa3aic06undadkc5s7t5lxpne11vgyt/obj/257/elements?id=20]  THEN ![fact.perfomance_by_campaign_id.general_score_12]
         END)"
-    GoodData::SmallGoodZilla.get_ids(metric).should == [
+    GutData::SmallGoodZilla.get_ids(metric).should == [
       "attr.customer_profiles.profile_id",
       "fact.perfomance_by_campaign_id.general_score_1",
       "fact.perfomance_by_campaign_id.general_score_5",

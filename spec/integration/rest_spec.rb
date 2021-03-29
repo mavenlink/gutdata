@@ -8,7 +8,7 @@ require 'tempfile'
 
 require 'gutdata/core/rest'
 
-describe GoodData do
+describe GutData do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
     # @project = ProjectHelper.get_default_project(:client => @client)
@@ -27,7 +27,7 @@ describe GoodData do
   end
 
   def test_webdav_upload(params)
-    GoodData.with_project(@project, :client => @client) do
+    GutData.with_project(@project, :client => @client) do
 
       # use current timestamp as a directory name on webdav
       dir = params[:no_dir] ? nil : Time.now.to_i.to_s
@@ -46,14 +46,14 @@ describe GoodData do
       path = File.expand_path(path) if params[:absolute_path]
 
       # upload it there
-      upload_method = GoodData.method(params[:upload_method])
+      upload_method = GutData.method(params[:upload_method])
       upload_method.call(path, directory: dir)
 
       # download it from there
       temp_file = Tempfile.new('foo.csv')
       expect(temp_file.size).to be == 0
 
-      download_method = GoodData.method(params[:download_method])
+      download_method = GutData.method(params[:download_method])
 
       file_basename = File.basename(path)
       file_basename = "NOTTHERE_#{file_basename}" if params[:unknown_file]
@@ -61,11 +61,11 @@ describe GoodData do
       download_block = proc do
         if params[:path_in_file]
           # pass the dir directly in the first param
-          # e.g. GoodData.download_from_project_webdav('1234/test-ci-data.csv', '/tmp/myfile.csv')
+          # e.g. GutData.download_from_project_webdav('1234/test-ci-data.csv', '/tmp/myfile.csv')
           download_method.call(File.join(dir, file_basename).to_s, temp_file)
         else
           # pass the dir in the :directory option
-          # e.g. GoodData.download_from_project_webdav('test-ci-data.csv', '/tmp/myfile.csv', :directory => '1234')
+          # e.g. GutData.download_from_project_webdav('test-ci-data.csv', '/tmp/myfile.csv', :directory => '1234')
           download_method.call(file_basename, temp_file, directory: dir)
         end
       end
@@ -207,7 +207,7 @@ describe GoodData do
 
   describe '#user_webdav_path' do
     it 'Gets the path' do
-      expect(@client.user_webdav_path).to eq GoodData::Environment::ConnectionHelper::STAGING_URI
+      expect(@client.user_webdav_path).to eq GutData::Environment::ConnectionHelper::STAGING_URI
     end
   end
 end

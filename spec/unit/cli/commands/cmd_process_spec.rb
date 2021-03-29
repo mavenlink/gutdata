@@ -6,7 +6,7 @@
 
 require 'gutdata/cli/cli'
 
-describe 'GoodData::CLI - process', :broken => true do
+describe 'GutData::CLI - process', :broken => true do
   describe 'process' do
     it 'Complains when no subcommand specified' do
       args = %w(process)

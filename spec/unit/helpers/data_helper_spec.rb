@@ -6,7 +6,7 @@
 
 require 'gutdata/helpers/data_helper'
 
-describe GoodData::Helpers::DataSource do
+describe GutData::Helpers::DataSource do
   before :each do
     @s3_client = double('s3_client')
     @buckets = double('buckets')
@@ -18,7 +18,7 @@ describe GoodData::Helpers::DataSource do
     allow(@bucket).to receive(:objects) { @objects }
     allow(@objects).to receive(:[]) { StringIO.new('aaa') }
 
-    @ds = GoodData::Helpers::DataSource.new({
+    @ds = GutData::Helpers::DataSource.new({
       type: :s3,
       bucket: 'some_bucket',
       key: 'some_key'
@@ -41,7 +41,7 @@ describe GoodData::Helpers::DataSource do
   end
 
   it 'should gracefully handle missing data source params - bucket' do
-    ds = GoodData::Helpers::DataSource.new({
+    ds = GutData::Helpers::DataSource.new({
       type: :s3,
       key: 'some_key'
     })
@@ -52,7 +52,7 @@ describe GoodData::Helpers::DataSource do
   end
 
   it 'should gracefully handle missing data source params - key' do
-    ds = GoodData::Helpers::DataSource.new({
+    ds = GutData::Helpers::DataSource.new({
       type: :s3,
       bucket: 'some_bucket'
     })

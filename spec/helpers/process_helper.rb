@@ -13,17 +13,17 @@ require 'gutdata/models/models'
 
 require_relative '../environment/environment'
 
-GoodData::Environment.load
+GutData::Environment.load
 
-module GoodData::Helpers
+module GutData::Helpers
   module ProcessHelper
-    include GoodData::Environment::ProcessHelper
+    include GutData::Environment::ProcessHelper
 
     class << self
       def remove_old_processes(project)
         processes = project.processes
         processes.pmap do |process|
-          next if process.obj_id == GoodData::Environment::ProcessHelper::PROCESS_ID
+          next if process.obj_id == GutData::Environment::ProcessHelper::PROCESS_ID
           puts "Deleting #{process.inspect}"
           process.delete
         end

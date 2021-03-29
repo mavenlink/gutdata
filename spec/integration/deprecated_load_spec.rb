@@ -9,7 +9,7 @@ require 'gutdata'
 describe "Full project implementation", :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper::create_default_connection
-    @blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+    @blueprint = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_dataset("dataset.repos") do |d|
         d.add_anchor("attr.repository")
         d.add_label('label.repository.name', reference: 'attr.repository')

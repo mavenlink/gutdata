@@ -8,8 +8,8 @@ require 'gutdata/bricks/brick'
 require 'gutdata/bricks/bricks'
 require 'gutdata/bricks/middleware/twitter_middleware'
 
-  describe GoodData::Bricks::TwitterMiddleware do
-  it "Has GoodData::Bricks::TwitterMiddleware class" do
-    GoodData::Bricks::TwitterMiddleware.should_not == nil
+  describe GutData::Bricks::TwitterMiddleware do
+  it "Has GutData::Bricks::TwitterMiddleware class" do
+    GutData::Bricks::TwitterMiddleware.should_not == nil
   end
 end

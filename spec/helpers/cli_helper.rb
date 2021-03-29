@@ -6,7 +6,7 @@
 
 require 'gutdata/cli/cli'
 
-module GoodData::Helpers
+module GutData::Helpers
   module CliHelper
     # Execute block and capture its stdou
     # @param block Block to be executed with stdout redirected
@@ -28,7 +28,7 @@ module GoodData::Helpers
     def run_cli(args = [])
       old = $0
       $0 = 'gooddata'
-      res = capture_stdout { GoodData::CLI.main(args) }
+      res = capture_stdout { GutData::CLI.main(args) }
       $0 = old
       res
     end

@@ -6,35 +6,35 @@
 
 require 'gutdata/connection'
 
-describe GoodData::Rest::Connection do
+describe GutData::Rest::Connection do
   before(:all) do
     USERNAME = ConnectionHelper::DEFAULT_USERNAME
     PASSWORD = ConnectionHelper::DEFAULT_PASSWORD
   end
 
   it "Has DEFAULT_URL defined" do
-    GoodData::Rest::Connection::DEFAULT_URL.should be_a(String)
+    GutData::Rest::Connection::DEFAULT_URL.should be_a(String)
   end
 
   it "Has LOGIN_PATH defined" do
-    GoodData::Rest::Connection::LOGIN_PATH.should be_a(String)
+    GutData::Rest::Connection::LOGIN_PATH.should be_a(String)
   end
 
   it "Has TOKEN_PATH defined" do
-    GoodData::Rest::Connection::TOKEN_PATH.should be_a(String)
+    GutData::Rest::Connection::TOKEN_PATH.should be_a(String)
   end
 
   describe '#connect' do
     it "Connects using username and password" do
-      c = GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD, :verify_ssl => 0)
-      c.should be_a(GoodData::Rest::Client)
+      c = GutData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD, :verify_ssl => 0)
+      c.should be_a(GutData::Rest::Client)
       c.disconnect
     end
   end
 
   describe '#disconnect' do
     it "Connects using username and password" do
-      c = GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD, :verify_ssl => 0)
+      c = GutData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD, :verify_ssl => 0)
       c.disconnect
     end
   end

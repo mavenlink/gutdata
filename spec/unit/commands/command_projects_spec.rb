@@ -6,7 +6,7 @@
 
 require 'gutdata/commands/project'
 
-describe GoodData::Command::Project do
+describe GutData::Command::Project do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
   end
@@ -15,8 +15,8 @@ describe GoodData::Command::Project do
     @client.disconnect
   end
 
-  it "Is Possible to create GoodData::Command::Project instance" do
-    cmd = GoodData::Command::Project.new()
-    cmd.should be_a(GoodData::Command::Project)
+  it "Is Possible to create GutData::Command::Project instance" do
+    cmd = GutData::Command::Project.new()
+    cmd.should be_a(GutData::Command::Project)
   end
 end

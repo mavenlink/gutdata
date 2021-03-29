@@ -30,25 +30,25 @@ end
 
 
 
-describe 'GoodData - logging' do
+describe 'GutData - logging' do
   TEST_MESSAGE = 'Hello World!'
 
   def test_error
-    GoodData.logger.error TEST_MESSAGE
+    GutData.logger.error TEST_MESSAGE
   end
 
   def test_info
-    GoodData.logger.info TEST_MESSAGE
+    GutData.logger.info TEST_MESSAGE
   end
 
   def test_warn
-    GoodData.logger.warn TEST_MESSAGE
+    GutData.logger.warn TEST_MESSAGE
   end
 
   def test_request_id_logging
     c = ConnectionHelper.create_default_connection
     id = c.generate_request_id
-    GoodData.logger.info "Request id: #{id} Doing something very useful"
+    GutData.logger.info "Request id: #{id} Doing something very useful"
     c.get('/gdc/md', :request_id => id)
     id
   end
@@ -62,49 +62,49 @@ describe 'GoodData - logging' do
 
   before(:each) do
     # remember the state of logging before
-    @logging_on_at_start = GoodData.logging_on?
+    @logging_on_at_start = GutData.logging_on?
   end
 
   after(:each) do
     # restore the logging state
     if @logging_on_at_start
-      GoodData.logging_on
+      GutData.logging_on
     else
-      GoodData.logging_off
+      GutData.logging_off
     end
   end
 
   describe '#logger' do
     it "can assign a custom logger" do
-      GoodData.logger = TestLogger.new(STDOUT)
+      GutData.logger = TestLogger.new(STDOUT)
       test_all
     end
     it 'has the request id logged when I passed it' do
-      GoodData.logger = TestLogger.new(STDOUT)
+      GutData.logger = TestLogger.new(STDOUT)
       id = test_request_id_logging
-      expect(GoodData.logger.last_message).to include(id)
+      expect(GutData.logger.last_message).to include(id)
     end
     it 'client logs when given custom message' do
-      GoodData.logger = TestLogger.new(STDOUT)
-      GoodData.logger.level = Logger::INFO
+      GutData.logger = TestLogger.new(STDOUT)
+      GutData.logger.level = Logger::INFO
       c = ConnectionHelper.create_default_connection
       message = "Getting all projects."
       c.get('/gdc/md', :info_message => message)
-      expect(GoodData.logger.last_message).to include(message)
+      expect(GutData.logger.last_message).to include(message)
     end
   end
 
 
   describe '#logging_on' do
     it 'Enables logging' do
-      GoodData.logging_on
+      GutData.logging_on
       test_all
     end
   end
 
   describe '#logging_off' do
     it 'Disables logging' do
-      GoodData.logging_off
+      GutData.logging_off
       test_all
     end
   end

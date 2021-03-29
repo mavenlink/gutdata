@@ -6,12 +6,12 @@
 
 require 'gutdata'
 
-describe GoodData::Model::ProjectBlueprint do
+describe GutData::Model::ProjectBlueprint do
 
   before(:each) do
-    @blueprint = GoodData::Model::ProjectBlueprint.from_json('./spec/data/blueprints/test_project_model_spec.json')
-    @invalid_blueprint = GoodData::Model::ProjectBlueprint.from_json('./spec/data/blueprints/invalid_blueprint.json')
-    @spec_blueprint = GoodData::Model::FromWire.from_wire(MultiJson.load(File.read('./spec/data/wire_models/model_view.json')))
+    @blueprint = GutData::Model::ProjectBlueprint.from_json('./spec/data/blueprints/test_project_model_spec.json')
+    @invalid_blueprint = GutData::Model::ProjectBlueprint.from_json('./spec/data/blueprints/invalid_blueprint.json')
+    @spec_blueprint = GutData::Model::FromWire.from_wire(MultiJson.load(File.read('./spec/data/wire_models/model_view.json')))
     @repos = @blueprint.find_dataset('dataset.repos')
     @commits = @blueprint.find_dataset('dataset.commits')
   end
@@ -28,7 +28,7 @@ describe GoodData::Model::ProjectBlueprint do
     end
 
     it 'model should be invalid if it contains more than one anchor' do
-      bp = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+      bp = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
         p.add_dataset("dataset.repos") do |d|
           d.add_anchor("repo_id")
           d.add_anchor("repo_id2")
@@ -43,7 +43,7 @@ describe GoodData::Model::ProjectBlueprint do
     end
 
     it 'model should be invalid if it contains no anchor' do
-      bp = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+      bp = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
         p.add_dataset("dataset.repos") do |d|
           d.add_fact("numbers")
           d.add_attribute("name")
@@ -57,7 +57,7 @@ describe GoodData::Model::ProjectBlueprint do
     end
 
     it 'model should be invalid if it has invalid gd data type' do
-      bp = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+      bp = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
         p.add_dataset("dataset.repos") do |d|
           d.add_anchor("attr.repository", label_id: 'label.repo.name', label_gd_data_type: "INTEGERX")
           d.add_attribute("attr.attribute1", title: 'Some attribute')
@@ -70,7 +70,7 @@ describe GoodData::Model::ProjectBlueprint do
     end
 
     it 'model should be valid if it has int specified as integer and default should be decimal' do
-      bp = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+      bp = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
         p.add_dataset("dataset.repos") do |d|
           d.add_anchor("attr.repository")
           d.add_label('label.repository.name', reference: 'attr.repository')
@@ -109,7 +109,7 @@ describe GoodData::Model::ProjectBlueprint do
     end
 
     it 'invalid label is caught correctly' do
-      bp = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+      bp = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
         p.add_dataset("dataset.repos") do |d|
           d.add_anchor("attr.repository", label_id: 'label.repo.name')
           d.add_attribute("attr.attribute1", title: 'Some attribute')
@@ -145,7 +145,7 @@ describe GoodData::Model::ProjectBlueprint do
     it "should be able to remove dataset by name" do
       expect(@blueprint.datasets.count).to eq 3
       bp = @blueprint.remove_dataset!('dataset.repos')
-      expect(bp).to be_kind_of(GoodData::Model::ProjectBlueprint)
+      expect(bp).to be_kind_of(GutData::Model::ProjectBlueprint)
       expect(@blueprint.datasets.count).to eq 2
     end
 
@@ -153,13 +153,13 @@ describe GoodData::Model::ProjectBlueprint do
       expect(@blueprint.datasets.count).to eq 3
       dataset = @blueprint.find_dataset('dataset.repos')
       bp = @blueprint.remove_dataset!(dataset)
-      expect(bp).to be_kind_of(GoodData::Model::ProjectBlueprint)
+      expect(bp).to be_kind_of(GutData::Model::ProjectBlueprint)
       expect(@blueprint.datasets.count).to eq 2
     end
 
     it "should be able to remove dataset by name" do
       expect(@blueprint.datasets.count).to eq 3
-      bp = GoodData::Model::ProjectBlueprint.remove_dataset!(@blueprint, 'dataset.repos')
+      bp = GutData::Model::ProjectBlueprint.remove_dataset!(@blueprint, 'dataset.repos')
       expect(bp).to be_kind_of(Hash)
       expect(@blueprint.datasets.count).to eq 2
     end
@@ -167,7 +167,7 @@ describe GoodData::Model::ProjectBlueprint do
     it "should be able to remove dataset by reference" do
       expect(@blueprint.datasets.count).to eq 3
       dataset = @blueprint.find_dataset('dataset.repos')
-      bp = GoodData::Model::ProjectBlueprint.remove_dataset!(@blueprint, dataset)
+      bp = GutData::Model::ProjectBlueprint.remove_dataset!(@blueprint, dataset)
       expect(bp).to be_kind_of(Hash)
       expect(@blueprint.datasets.count).to eq 2
     end
@@ -184,7 +184,7 @@ describe GoodData::Model::ProjectBlueprint do
     it 'should be able to get dataset by identifier' do
       ds = @blueprint.find_dataset('dataset.devs')
       expect(ds.id).to eq 'dataset.devs'
-      expect(ds).to be_kind_of(GoodData::Model::DatasetBlueprint)
+      expect(ds).to be_kind_of(GutData::Model::DatasetBlueprint)
     end
 
     it 'should throw an error if the dataset with a given name could not be found' do
@@ -200,7 +200,7 @@ describe GoodData::Model::ProjectBlueprint do
 
   describe '#to_blueprint' do
     it "should be possible to create ProjectBlueprint from SchemaBuilder" do
-      builder = GoodData::Model::SchemaBuilder.create("stuff") do |d|
+      builder = GutData::Model::SchemaBuilder.create("stuff") do |d|
         d.add_anchor("anchor_id")
         d.add_attribute("id", title: "My Id")
         d.add_label("label", reference: "id")
@@ -211,14 +211,14 @@ describe GoodData::Model::ProjectBlueprint do
     end
 
     it "should be possible to create ProjectBlueprint from SchemaBuilder" do
-      builder = GoodData::Model::SchemaBuilder.create("stuff") do |d|
+      builder = GutData::Model::SchemaBuilder.create("stuff") do |d|
         d.add_anchor("anchor_id")
         d.add_attribute("id", title: "My Id")
         d.add_label("label", reference: "id")
         d.add_fact("amount", title: "Amount")
       end
 
-      bp1 = GoodData::Model::ProjectBlueprint.new(builder)
+      bp1 = GutData::Model::ProjectBlueprint.new(builder)
       expect(bp1.valid?).to eq true
     end
   end
@@ -297,7 +297,7 @@ describe GoodData::Model::ProjectBlueprint do
 
   describe '#merge' do
     it "should be able to merge models without mutating the original" do
-      additional_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/additional_dataset_module.json") 
+      additional_blueprint = GutData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/additional_dataset_module.json") 
       expect(@blueprint.datasets.count).to eq 3
       new_bp = @blueprint.merge(additional_blueprint)
       expect(@blueprint.datasets.count).to eq 3
@@ -305,7 +305,7 @@ describe GoodData::Model::ProjectBlueprint do
     end
 
     it "should perform merge in associative matter. Order should not matter." do
-      a = GoodData::Model::ProjectBlueprint.build("p") do |p|
+      a = GutData::Model::ProjectBlueprint.build("p") do |p|
         p.add_date_dimension("updated_on")
         p.add_dataset('stuff') do |d|
           d.add_anchor('stuff_id')
@@ -313,7 +313,7 @@ describe GoodData::Model::ProjectBlueprint do
           d.add_date('updated_on')
         end
       end
-      b = GoodData::Model::ProjectBlueprint.build("p") do |p|
+      b = GutData::Model::ProjectBlueprint.build("p") do |p|
         p.add_date_dimension("created_on")
         p.add_dataset('stuff') do |d|
           d.add_attribute('attr_id')
@@ -331,7 +331,7 @@ describe GoodData::Model::ProjectBlueprint do
     end
 
     it "should perform merge in associative matter. Order should not matter." do
-      a = GoodData::Model::ProjectBlueprint.build("p") do |p|
+      a = GutData::Model::ProjectBlueprint.build("p") do |p|
         p.add_date_dimension("updated_on")
         p.add_dataset('stuff') do |d|
           d.add_anchor('stuff_id')
@@ -339,7 +339,7 @@ describe GoodData::Model::ProjectBlueprint do
           d.add_date('updated_on')
         end
       end
-      b = GoodData::Model::ProjectBlueprint.build("p") do |p|
+      b = GutData::Model::ProjectBlueprint.build("p") do |p|
         p.add_date_dimension("created_on")
         p.add_dataset('stuff') do |d|
           d.add_attribute('attr_id')
@@ -357,7 +357,7 @@ describe GoodData::Model::ProjectBlueprint do
     end
 
     it "should fail if unable to merge date dimensions (they are different)." do
-      a = GoodData::Model::ProjectBlueprint.build("p") do |p|
+      a = GutData::Model::ProjectBlueprint.build("p") do |p|
         p.add_date_dimension("created_on", title: 'title A')
         p.add_dataset('stuff') do |d|
           d.add_anchor('stuff_id')
@@ -365,7 +365,7 @@ describe GoodData::Model::ProjectBlueprint do
           d.add_date('created_on')
         end
       end
-      b = GoodData::Model::ProjectBlueprint.build("p") do |p|
+      b = GutData::Model::ProjectBlueprint.build("p") do |p|
         p.add_date_dimension("created_on", title: 'title B')
         p.add_dataset('stuff') do |d|
           d.add_attribute('attr_id')
@@ -381,7 +381,7 @@ describe GoodData::Model::ProjectBlueprint do
 
   describe '#merge!' do
     it "should be able to merge models" do
-      additional_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/additional_dataset_module.json") 
+      additional_blueprint = GutData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/additional_dataset_module.json") 
       expect(@blueprint.datasets.count).to eq 3
       @blueprint.merge!(additional_blueprint)
       expect(@blueprint.datasets.count).to eq 4
@@ -389,7 +389,7 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it "should be able to add datasets on the fly" do
-    builder = GoodData::Model::SchemaBuilder.new("stuff") do |d|
+    builder = GutData::Model::SchemaBuilder.new("stuff") do |d|
       d.add_attribute("id", title: "My Id")
       d.add_fact("amount", title: "Amount")
     end
@@ -426,7 +426,7 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it 'blueprint can be set without date reference and default format is set' do
-    bp = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+    bp = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_date_dimension("committed_on")
 
       p.add_dataset("dataset.repos") do |d|
@@ -440,11 +440,11 @@ describe GoodData::Model::ProjectBlueprint do
         d.add_date('opportunity_comitted', dataset: 'committed_on')
       end
     end
-    expect(bp.datasets.flat_map { |d| d.find_columns_by_type(:date) }.map { |a| a.format }).to eq [GoodData::Model::DEFAULT_DATE_FORMAT]
+    expect(bp.datasets.flat_map { |d| d.find_columns_by_type(:date) }.map { |a| a.format }).to eq [GutData::Model::DEFAULT_DATE_FORMAT]
   end
 
   it 'blueprint can be set with explicit date' do
-    bp = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+    bp = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_date_dimension("committed_on")
 
       p.add_dataset("dataset.repos") do |d|
@@ -463,7 +463,7 @@ describe GoodData::Model::ProjectBlueprint do
 
   describe '#remove' do
     it 'can remove the anchor' do
-      bp = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+      bp = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
         p.add_dataset("dataset.repos") do |d|
           d.add_anchor("attr.repository", label_id: 'label.repo.name')
           d.add_label('label.repository.name', title: 'Some attribute', reference: 'attr.repository')
@@ -520,7 +520,7 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it 'should be able to refactor facts from attributes' do
-    blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+    blueprint = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_dataset('opportunities') do |d|
         d.add_anchor('opportunities.id')
         d.add_fact('opportunities.age')
@@ -546,7 +546,7 @@ describe GoodData::Model::ProjectBlueprint do
       end
     end
 
-    refactored = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+    refactored = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_dataset('opportunities') do |d|
         d.add_anchor('opportunities.id')
         d.add_fact('opportunities.age')
@@ -583,7 +583,7 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it 'should be able to refactor facts as a split into 2 datasets' do
-    blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+    blueprint = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_dataset('opportunities') do |d|
         d.add_anchor('opportunities.id')
         d.add_fact('opportunities.age')
@@ -609,7 +609,7 @@ describe GoodData::Model::ProjectBlueprint do
       end
     end
 
-    refactored = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+    refactored = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_dataset('opportunities') do |d|
         d.add_anchor('opportunities.id')
         d.add_fact('opportunities.amount')

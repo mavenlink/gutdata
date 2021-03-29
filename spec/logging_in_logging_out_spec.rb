@@ -7,11 +7,11 @@
 require 'gutdata'
 require 'pry'
 
-describe GoodData::Rest::Connection, :constraint => 'slow' do
+describe GutData::Rest::Connection, :constraint => 'slow' do
 
   it "should log in and disconnect" do
     client = ConnectionHelper::create_default_connection
-    expect(client).to be_kind_of(GoodData::Rest::Client)
+    expect(client).to be_kind_of(GutData::Rest::Client)
 
     client.get("/gdc/md")
 
@@ -19,32 +19,32 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
   end
 
   it 'should be able to log in with user name and password as params' do
-    client = GoodData.connect(GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME, GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
-                              server: GoodData::Environment::ConnectionHelper::DEFAULT_SERVER,
+    client = GutData.connect(GutData::Environment::ConnectionHelper::DEFAULT_USERNAME, GutData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
+                              server: GutData::Environment::ConnectionHelper::DEFAULT_SERVER,
                               verify_ssl: false)
     client.disconnect
   end
 
   it 'should be able to log in with user name and password as hash' do
-    client = GoodData.connect(username: GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME,
-                              password: GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
-                              server: GoodData::Environment::ConnectionHelper::DEFAULT_SERVER,
+    client = GutData.connect(username: GutData::Environment::ConnectionHelper::DEFAULT_USERNAME,
+                              password: GutData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
+                              server: GutData::Environment::ConnectionHelper::DEFAULT_SERVER,
                               verify_ssl: false)
     client.disconnect
   end
 
   it 'should be able to log in with login and password as hash' do
-    client = GoodData.connect(login: GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME,
-                              password: GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
-                              server: GoodData::Environment::ConnectionHelper::DEFAULT_SERVER,
+    client = GutData.connect(login: GutData::Environment::ConnectionHelper::DEFAULT_USERNAME,
+                              password: GutData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
+                              server: GutData::Environment::ConnectionHelper::DEFAULT_SERVER,
                               verify_ssl: false)
     client.disconnect
   end
 
   it 'should be able to pass additional params in hash' do
-    client = GoodData.connect(login: GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME,
-                              password: GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
-                              server: GoodData::Environment::ConnectionHelper::DEFAULT_SERVER,
+    client = GutData.connect(login: GutData::Environment::ConnectionHelper::DEFAULT_USERNAME,
+                              password: GutData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
+                              server: GutData::Environment::ConnectionHelper::DEFAULT_SERVER,
                               webdav_server: 'https://some_random_server/',
                               verify_ssl: false)
     expect(client.opts[:webdav_server]).to eq 'https://some_random_server/'
@@ -52,8 +52,8 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
   end
 
   it 'should be able to pass additional params in hash when used login/pass' do
-    client = GoodData.connect(GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME, GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
-                              server: GoodData::Environment::ConnectionHelper::DEFAULT_SERVER,
+    client = GutData.connect(GutData::Environment::ConnectionHelper::DEFAULT_USERNAME, GutData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
+                              server: GutData::Environment::ConnectionHelper::DEFAULT_SERVER,
                               webdav_server: 'https://some_random_server/',
                               verify_ssl: false)
     expect(client.opts[:webdav_server]).to eq 'https://some_random_server/'
@@ -64,7 +64,7 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
     regular_client = ConnectionHelper::create_default_connection
     sst = regular_client.connection.sst_token
 
-    sst_client = GoodData.connect(sst_token: sst, verify_ssl: false)
+    sst_client = GutData.connect(sst_token: sst, verify_ssl: false)
     expect(sst_client.projects.count).to be > 0
     sst_client.disconnect
 
@@ -75,7 +75,7 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
     regular_client = ConnectionHelper::create_default_connection
     sst = regular_client.connection.sst_token
 
-    sst_client = GoodData.connect(sst_token: sst, verify_ssl: false, webdav_server: 'https://some_random_server/')
+    sst_client = GutData.connect(sst_token: sst, verify_ssl: false, webdav_server: 'https://some_random_server/')
     expect(sst_client.projects.count).to be > 0
     expect(sst_client.opts[:webdav_server]).to eq 'https://some_random_server/'
     sst_client.disconnect

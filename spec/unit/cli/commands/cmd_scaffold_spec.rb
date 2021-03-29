@@ -8,7 +8,7 @@ require 'fileutils'
 
 require 'gutdata/cli/cli'
 
-describe 'GoodData::CLI - scaffold', :broken => true do
+describe 'GutData::CLI - scaffold', :broken => true do
   TEST_PROJECT_NAME = 'test-project'
   TEST_BRICK_NAME = 'test-brick'
 

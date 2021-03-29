@@ -6,4 +6,4 @@
 
 require 'gutdata'
 
-puts "GoodData::VERSION - #{GoodData::VERSION}"
+puts "GutData::VERSION - #{GutData::VERSION}"

@@ -6,7 +6,7 @@
 
 require 'gutdata/commands/scaffold'
 
-describe GoodData::Command::Scaffold do
+describe GutData::Command::Scaffold do
   before(:all) do
     @suffix = Time.now.strftime('%Y%m%d%H%M%S')
   end
@@ -19,9 +19,9 @@ describe GoodData::Command::Scaffold do
     @client.disconnect
   end
 
-  it "Is Possible to create GoodData::Command::Scaffold instance" do
-    cmd = GoodData::Command::Scaffold.new()
-    cmd.should be_a(GoodData::Command::Scaffold)
+  it "Is Possible to create GutData::Command::Scaffold instance" do
+    cmd = GutData::Command::Scaffold.new()
+    cmd.should be_a(GutData::Command::Scaffold)
   end
 
   describe "#brick" do
@@ -35,12 +35,12 @@ describe GoodData::Command::Scaffold do
 
     it "Throws ArgumentError exception if no name specified" do
       expect do
-        GoodData::Command::Scaffold.brick(nil)
+        GutData::Command::Scaffold.brick(nil)
       end.to raise_exception
     end
 
     it "Scaffolds new brick" do
-      GoodData::Command::Scaffold.brick(@brick_name)
+      GutData::Command::Scaffold.brick(@brick_name)
     end
   end
 
@@ -55,12 +55,12 @@ describe GoodData::Command::Scaffold do
 
     it "Throws ArgumentError exception if no name specified" do
       expect do
-        GoodData::Command::Scaffold.project(nil)
+        GutData::Command::Scaffold.project(nil)
       end.to raise_exception
     end
 
     it "Scaffolds new project" do
-      GoodData::Command::Scaffold.project(@project_name)
+      GutData::Command::Scaffold.project(@project_name)
     end
   end
 

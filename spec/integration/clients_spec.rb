@@ -7,11 +7,11 @@
 require 'gutdata/models/segment'
 require 'securerandom'
 
-describe GoodData::Client do
+describe GutData::Client do
   TOKEN = 'mustangs'
 
   before(:all) do
-    @client = GoodData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false )
+    @client = GutData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false )
     @domain = @client.domain('mustangs')
     @master_project = @client.create_project(title: 'Test project', auth_token: TOKEN)
     @segment_name = "segment-#{SecureRandom.uuid}"
@@ -39,7 +39,7 @@ describe GoodData::Client do
 
     it 'Returns specific tenant when schedule ID passed' do
       client = @segment.clients(@segment_client.uri)
-      expect(client).to be_an_instance_of(GoodData::Client)
+      expect(client).to be_an_instance_of(GutData::Client)
       expect(client.uri).to eq @segment_client.uri
     end
 

@@ -10,18 +10,18 @@ describe 'Behavior during polling and retries' do
   before :each do
     WebMock.enable!
 
-    @server = GoodData::Environment::ConnectionHelper::DEFAULT_SERVER
-    @coef = GoodData::Rest::Connection::RETRY_TIME_COEFFICIENT
-    @init = GoodData::Rest::Connection::RETRY_TIME_INITIAL_VALUE
-    @poll = GoodData::Rest::Client::DEFAULT_SLEEP_INTERVAL
+    @server = GutData::Environment::ConnectionHelper::DEFAULT_SERVER
+    @coef = GutData::Rest::Connection::RETRY_TIME_COEFFICIENT
+    @init = GutData::Rest::Connection::RETRY_TIME_INITIAL_VALUE
+    @poll = GutData::Rest::Client::DEFAULT_SLEEP_INTERVAL
 
-    GoodData::Rest::Connection.send(:remove_const, :RETRY_TIME_COEFFICIENT) if GoodData::Rest::Connection.const_defined?(:RETRY_TIME_COEFFICIENT)
-    GoodData::Rest::Connection.send(:remove_const, :RETRY_TIME_INITIAL_VALUE) if GoodData::Rest::Connection.const_defined?(:RETRY_TIME_INITIAL_VALUE)
-    GoodData::Rest::Client.send(:remove_const, :DEFAULT_SLEEP_INTERVAL) if GoodData::Rest::Client.const_defined?(:DEFAULT_SLEEP_INTERVAL)
+    GutData::Rest::Connection.send(:remove_const, :RETRY_TIME_COEFFICIENT) if GutData::Rest::Connection.const_defined?(:RETRY_TIME_COEFFICIENT)
+    GutData::Rest::Connection.send(:remove_const, :RETRY_TIME_INITIAL_VALUE) if GutData::Rest::Connection.const_defined?(:RETRY_TIME_INITIAL_VALUE)
+    GutData::Rest::Client.send(:remove_const, :DEFAULT_SLEEP_INTERVAL) if GutData::Rest::Client.const_defined?(:DEFAULT_SLEEP_INTERVAL)
 
-    GoodData::Rest::Connection.const_set(:RETRY_TIME_COEFFICIENT, 1)
-    GoodData::Rest::Connection.const_set(:RETRY_TIME_INITIAL_VALUE, 0)
-    GoodData::Rest::Client.const_set(:DEFAULT_SLEEP_INTERVAL, 0)
+    GutData::Rest::Connection.const_set(:RETRY_TIME_COEFFICIENT, 1)
+    GutData::Rest::Connection.const_set(:RETRY_TIME_INITIAL_VALUE, 0)
+    GutData::Rest::Client.const_set(:DEFAULT_SLEEP_INTERVAL, 0)
     stub_request(:get, "#{@server}/gdc")
       .to_return(:body => {"about" => { "links" => [{ "link"=>"https://secure-di.gooddata.com/uploads", "summary"=>"User data staging area.", "category"=>"uploads", "title"=>"user-uploads" }]}}.to_json, :headers => { 'Content-Type' => "application/json" })
     stub_request(:post, "#{@server}/gdc/account/login")
@@ -39,24 +39,24 @@ describe 'Behavior during polling and retries' do
     stub_request(:get, "#{@server}/internal_error")
       .to_return(:body => {}.to_json, :status => 500, :headers => { 'Content-Type' => "application/json"} )
 
-    @client = GoodData.connect('aaa', 'bbbb')
+    @client = GutData.connect('aaa', 'bbbb')
   end
 
   after :each do
     WebMock.disable!
-    GoodData::Rest::Connection.send(:remove_const, :RETRY_TIME_COEFFICIENT) if GoodData::Rest::Connection.const_defined?(:RETRY_TIME_COEFFICIENT)
-    GoodData::Rest::Connection.send(:remove_const, :RETRY_TIME_INITIAL_VALUE) if GoodData::Rest::Connection.const_defined?(:RETRY_TIME_INITIAL_VALUE)
-    GoodData::Rest::Client.send(:remove_const, :DEFAULT_SLEEP_INTERVAL) if GoodData::Rest::Client.const_defined?(:DEFAULT_SLEEP_INTERVAL)
+    GutData::Rest::Connection.send(:remove_const, :RETRY_TIME_COEFFICIENT) if GutData::Rest::Connection.const_defined?(:RETRY_TIME_COEFFICIENT)
+    GutData::Rest::Connection.send(:remove_const, :RETRY_TIME_INITIAL_VALUE) if GutData::Rest::Connection.const_defined?(:RETRY_TIME_INITIAL_VALUE)
+    GutData::Rest::Client.send(:remove_const, :DEFAULT_SLEEP_INTERVAL) if GutData::Rest::Client.const_defined?(:DEFAULT_SLEEP_INTERVAL)
 
-    GoodData::Rest::Connection.const_set(:RETRY_TIME_COEFFICIENT, @coef)
-    GoodData::Rest::Connection.const_set(:RETRY_TIME_INITIAL_VALUE, @init)
-    GoodData::Rest::Client.const_set(:DEFAULT_SLEEP_INTERVAL, @poll)
+    GutData::Rest::Connection.const_set(:RETRY_TIME_COEFFICIENT, @coef)
+    GutData::Rest::Connection.const_set(:RETRY_TIME_INITIAL_VALUE, @init)
+    GutData::Rest::Client.const_set(:DEFAULT_SLEEP_INTERVAL, @poll)
   end
 
   it 'should fail a poller after timelimit passes' do
     expect do
       @client.poll_on_response('/poll_test', time_limit: 0.1) { |_| true }
-    end.to raise_error(GoodData::ExecutionLimitExceeded)
+    end.to raise_error(GutData::ExecutionLimitExceeded)
   end
 
   it 'should make MAX_REQUESTS when hitting 429' do

@@ -10,8 +10,8 @@ require 'gutdata/cli/terminal'
 require 'gutdata/commands/auth'
 require 'gutdata/helpers/auth_helpers'
 
-describe GoodData::Command::Auth do
-  ORIG_TERMINAL = GoodData::CLI::DEFAULT_TERMINAL unless const_defined?(:ORIG_TERMINAL)
+describe GutData::Command::Auth do
+  ORIG_TERMINAL = GutData::CLI::DEFAULT_TERMINAL unless const_defined?(:ORIG_TERMINAL)
 
   DEFAULT_CREDENTIALS = {
     :email => 'joedoe@example.com',
@@ -34,11 +34,11 @@ describe GoodData::Command::Auth do
     @output = StringIO.new
     @terminal = HighLine.new(@input, @output)
 
-    GoodData::CLI::DEFAULT_TERMINAL = @terminal
+    GutData::CLI::DEFAULT_TERMINAL = @terminal
   end
 
   after(:all) do
-    GoodData::CLI::DEFAULT_TERMINAL = ORIG_TERMINAL
+    GutData::CLI::DEFAULT_TERMINAL = ORIG_TERMINAL
   end
 
 
@@ -50,14 +50,14 @@ describe GoodData::Command::Auth do
     @client.disconnect
   end
 
-  it "Is Possible to create GoodData::Command::Auth instance" do
-    cmd = GoodData::Command::Auth.new()
-    cmd.should be_a(GoodData::Command::Auth)
+  it "Is Possible to create GutData::Command::Auth instance" do
+    cmd = GutData::Command::Auth.new()
+    cmd.should be_a(GutData::Command::Auth)
   end
 
   describe "#credentials_file" do
     it "Returns credentials_file" do
-      GoodData::Helpers::AuthHelper.credentials_file
+      GutData::Helpers::AuthHelper.credentials_file
     end
   end
 
@@ -71,29 +71,29 @@ describe GoodData::Command::Auth do
       @input << DEFAULT_CREDENTIALS[:server] << "\n"
       @input.rewind
 
-      GoodData::Command::Auth.ask_for_credentials
+      GutData::Command::Auth.ask_for_credentials
     end
   end
 
   describe "#read_credentials" do
     it 'Reads credentials from default file if no path specified' do
-      GoodData::Helpers::AuthHelper.read_credentials
+      GutData::Helpers::AuthHelper.read_credentials
     end
 
     it 'Reads credentials from file specified' do
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
 
-      result = GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      result = GutData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
 
-      GoodData::Helpers::AuthHelper.read_credentials(temp_path)
-      GoodData::Command::Auth.unstore(temp_path)
+      GutData::Helpers::AuthHelper.read_credentials(temp_path)
+      GutData::Command::Auth.unstore(temp_path)
 
       result.should == DEFAULT_CREDENTIALS
     end
 
     it 'Returns empty hash if invalid path specified' do
       expect = {}
-      result = GoodData::Helpers::AuthHelper.read_credentials('/some/invalid/path')
+      result = GutData::Helpers::AuthHelper.read_credentials('/some/invalid/path')
       result.should == expect
     end
   end
@@ -102,8 +102,8 @@ describe GoodData::Command::Auth do
     it 'Writes credentials' do
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
 
-      result = GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
-      GoodData::Command::Auth.unstore(temp_path)
+      result = GutData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      GutData::Command::Auth.unstore(temp_path)
 
       result.should == DEFAULT_CREDENTIALS
     end
@@ -121,8 +121,8 @@ describe GoodData::Command::Auth do
       @input.rewind
 
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
-      GoodData::Command::Auth.unstore(temp_path)
-      GoodData::Command::Auth.store(temp_path)
+      GutData::Command::Auth.unstore(temp_path)
+      GutData::Command::Auth.store(temp_path)
     end
 
     it 'Overwrites credentials if confirmed' do
@@ -136,9 +136,9 @@ describe GoodData::Command::Auth do
       @input.rewind
 
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
-      GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      GutData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
 
-      GoodData::Command::Auth.store(temp_path)
+      GutData::Command::Auth.store(temp_path)
     end
 
     it 'Do not overwrites credentials if not confirmed' do
@@ -152,10 +152,10 @@ describe GoodData::Command::Auth do
       @input.rewind
 
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
-      GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      GutData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
 
-      GoodData::Command::Auth.store(temp_path)
-      result = GoodData::Helpers::AuthHelper.read_credentials(temp_path)
+      GutData::Command::Auth.store(temp_path)
+      result = GutData::Helpers::AuthHelper.read_credentials(temp_path)
 
       result.should == DEFAULT_CREDENTIALS
     end
@@ -164,8 +164,8 @@ describe GoodData::Command::Auth do
   describe "#unstore" do
     it 'Removes stored credentials' do
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
-      GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
-      GoodData::Command::Auth.unstore(temp_path)
+      GutData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      GutData::Command::Auth.unstore(temp_path)
     end
   end
 end

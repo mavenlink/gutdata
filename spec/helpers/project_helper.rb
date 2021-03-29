@@ -12,20 +12,20 @@ require 'gutdata/models/models'
 
 require_relative '../environment/environment'
 
-GoodData::Environment.load
+GutData::Environment.load
 
-module GoodData::Helpers
+module GutData::Helpers
   module ProjectHelper
-    include GoodData::Environment::ProjectHelper
+    include GutData::Environment::ProjectHelper
 
     ENVIRONMENT = 'TESTING'
 
     class << self
-      def get_default_project(opts = {:client => GoodData.connection})
-        GoodData::Project[GoodData::Helpers::ProjectHelper::PROJECT_ID, opts]
+      def get_default_project(opts = {:client => GutData.connection})
+        GutData::Project[GutData::Helpers::ProjectHelper::PROJECT_ID, opts]
       end
 
-      def delete_old_projects(opts = {:client => GoodData.connection})
+      def delete_old_projects(opts = {:client => GutData.connection})
         projects = opts[:client].projects
         projects.each do |project|
           next if project.json['project']['meta']['author'] != client.user.uri
@@ -52,7 +52,7 @@ module GoodData::Helpers
           password: CryptoHelper.generate_password,
           domain: ConnectionHelper::DEFAULT_DOMAIN
         }
-        GoodData::Membership.create(opts, client: client)
+        GutData::Membership.create(opts, client: client)
       end
     end
   end

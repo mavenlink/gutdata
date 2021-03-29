@@ -26,9 +26,9 @@ RAW_DATA = {
 }
 
 
-describe GoodData::MdObject do
+describe GutData::MdObject do
   before(:each) do
-    @instance = GoodData::MdObject.new(GoodData::Helpers.deep_dup(RAW_DATA))
+    @instance = GutData::MdObject.new(GutData::Helpers.deep_dup(RAW_DATA))
   end
 
   describe '#identifier=' do

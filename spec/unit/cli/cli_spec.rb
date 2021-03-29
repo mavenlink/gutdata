@@ -6,12 +6,12 @@
 
 require 'gutdata/cli/cli'
 
-describe GoodData::CLI do
-  it 'Has GoodData::CLI class' do
-    GoodData::CLI.should_not == nil
+describe GutData::CLI do
+  it 'Has GutData::CLI class' do
+    GutData::CLI.should_not == nil
   end
 
-  it 'Has GoodData::CLI::main() working' do
+  it 'Has GutData::CLI::main() working' do
     run_cli
   end
 end

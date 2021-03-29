@@ -6,11 +6,11 @@
 
 require 'gutdata'
 
-describe GoodData::Model::AttributeBlueprintField do
+describe GutData::Model::AttributeBlueprintField do
 
   before(:each) do
     @model_view = MultiJson.load(File.read('./spec/data/wire_models/model_view.json'))
-    @blueprint = GoodData::Model::FromWire.from_wire(@model_view)
+    @blueprint = GutData::Model::FromWire.from_wire(@model_view)
     @dataset = @blueprint.datasets('dataset.account')
     @attribute = @dataset.attributes('attr.account.region')
   end

@@ -7,7 +7,7 @@
 require 'pmap'
 require 'gutdata'
 
-describe GoodData::Project, :constraint => 'slow' do
+describe GutData::Project, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper::create_default_connection
     @project = @client.create_project(title: ProjectHelper::PROJECT_TITLE, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
@@ -31,7 +31,7 @@ describe GoodData::Project, :constraint => 'slow' do
       user = ProjectHelper.create_random_user(@client)
       @domain.create_users([user])
       res = @project.add_user(user, 'Admin', domain: @domain)
-      login = GoodData::Helpers.last_uri_part(res['projectUsersUpdateResult']['successful'].first)
+      login = GutData::Helpers.last_uri_part(res['projectUsersUpdateResult']['successful'].first)
       expect(@project.member?(login)).to be_truthy
     end
   end
@@ -58,7 +58,7 @@ describe GoodData::Project, :constraint => 'slow' do
       end
       @domain.create_users(users.map {|u| u[:user]})
       res = @project.add_users(users, domain: @domain)
-      links = res.select { |r|  r[:type] == :successful }.map { |i| GoodData::Helpers.last_uri_part(i[:user]) }
+      links = res.select { |r|  r[:type] == :successful }.map { |i| GutData::Helpers.last_uri_part(i[:user]) }
       expect(@project.members?(links).all?).to be_truthy
     end
   end

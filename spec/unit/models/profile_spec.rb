@@ -9,7 +9,7 @@ require 'gutdata/models/profile'
 require 'gutdata/models/domain'
 require 'gutdata/models/project'
 
-describe GoodData::Profile do
+describe GutData::Profile do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
@@ -18,7 +18,7 @@ describe GoodData::Profile do
     @user2 = @domain.get_user(ConnectionHelper::DEFAULT_USERNAME)
 
     @users = [
-      @client.create(GoodData::Profile,
+      @client.create(GutData::Profile,
         {
           'accountSetting' => {
             'email' => 'petr.cvengros@gooddata.com',
@@ -28,7 +28,7 @@ describe GoodData::Profile do
         }
       ),
 
-      @client.create(GoodData::Profile,
+      @client.create(GutData::Profile,
         {
           'accountSetting' => {
             'email' => 'tomas.korcak@gooddata.com',
@@ -38,7 +38,7 @@ describe GoodData::Profile do
         }
       ),
 
-      @client.create(GoodData::Profile,
+      @client.create(GutData::Profile,
         {
           'accountSetting' => {
             'email' => 'patrick.mcconlogue@gooddata.com',
@@ -49,7 +49,7 @@ describe GoodData::Profile do
         }
       ),
 
-      @client.create(GoodData::Profile,
+      @client.create(GutData::Profile,
         {
           'accountSetting' => {
             'email' => 'tomas.svarovsky@gooddata.com',
@@ -69,15 +69,15 @@ describe GoodData::Profile do
     it 'Finds the profile by URL' do
       project = ProjectHelper.get_default_project
       users = project.users
-      user = GoodData::Profile[users.first.uri, :client => @client]
-      expect(user).to be_kind_of(GoodData::Profile)
+      user = GutData::Profile[users.first.uri, :client => @client]
+      expect(user).to be_kind_of(GutData::Profile)
     end
 
     it 'Finds the profile by ID' do
       project = ProjectHelper.get_default_project
       users = project.users
-      user = GoodData::Profile[users.first.uri.split('/').last, :client => @client]
-      expect(user).to be_kind_of(GoodData::Profile)
+      user = GutData::Profile[users.first.uri.split('/').last, :client => @client]
+      expect(user).to be_kind_of(GutData::Profile)
     end
   end
 
@@ -119,7 +119,7 @@ describe GoodData::Profile do
 
       diff = @user1.diff(@user2)
       expect(diff).to be_instance_of(Hash)
-      updated_user = GoodData::Profile.create_object(@user1.to_hash.merge(diff))
+      updated_user = GutData::Profile.create_object(@user1.to_hash.merge(diff))
       expect(@user1).to eq updated_user
       expect(@user2).not_to eq updated_user
     end
@@ -152,7 +152,7 @@ describe GoodData::Profile do
         @users[0]
       ]
   
-      diff = GoodData::Profile.diff_list(l1, l2)
+      diff = GutData::Profile.diff_list(l1, l2)
       diff[:added].length.should eql(0)
       diff[:changed].length.should eql(0)
       diff[:removed].length.should eql(0)
@@ -165,7 +165,7 @@ describe GoodData::Profile do
         @users[0]
       ]
   
-      diff = GoodData::Profile.diff_list(l1, l2)
+      diff = GutData::Profile.diff_list(l1, l2)
       diff[:added].length.should eql(1)
       diff[:changed].length.should eql(0)
       diff[:removed].length.should eql(0)
@@ -177,11 +177,11 @@ describe GoodData::Profile do
       ]
   
       l2 = [
-        GoodData::Profile.new(GoodData::Helpers.deep_dup(@users[0].json))
+        GutData::Profile.new(GutData::Helpers.deep_dup(@users[0].json))
       ]
       l2[0].first_name = 'Peter'
   
-      diff = GoodData::Profile.diff_list(l1, l2)
+      diff = GutData::Profile.diff_list(l1, l2)
       diff[:added].length.should eql(0)
       diff[:changed].length.should eql(1)
       diff[:removed].length.should eql(0)
@@ -194,7 +194,7 @@ describe GoodData::Profile do
   
       l2 = []
   
-      diff = GoodData::Profile.diff_list(l1, l2)
+      diff = GutData::Profile.diff_list(l1, l2)
       diff[:added].length.should eql(0)
       diff[:changed].length.should eql(0)
       diff[:removed].length.should eql(1)
@@ -202,12 +202,12 @@ describe GoodData::Profile do
   end
 
   describe '#projects' do
-    it 'Returns user projects as array of GoodData::Project' do
+    it 'Returns user projects as array of GutData::Project' do
       projects = @user1.projects
       expect(projects).to be_an_instance_of(Array)
 
       projects.each do |project|
-        expect(project).to be_an_instance_of(GoodData::Project)
+        expect(project).to be_an_instance_of(GutData::Project)
       end
     end
   end

@@ -6,7 +6,7 @@
 
 require 'gutdata/commands/datawarehouse'
 
-describe GoodData::Command::DataWarehouse do
+describe GutData::Command::DataWarehouse do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
   end
@@ -15,9 +15,9 @@ describe GoodData::Command::DataWarehouse do
     @client.disconnect
   end
 
-  it "Is Possible to create GoodData::Command::DataWarehouse instance" do
-    cmd = GoodData::Command::DataWarehouse.new()
-    cmd.should be_a(GoodData::Command::DataWarehouse)
+  it "Is Possible to create GutData::Command::DataWarehouse instance" do
+    cmd = GutData::Command::DataWarehouse.new()
+    cmd.should be_a(GutData::Command::DataWarehouse)
   end
 
   it "Can create a data warehouse" do
@@ -26,7 +26,7 @@ describe GoodData::Command::DataWarehouse do
     dwh = nil
 
     begin
-      dwh = GoodData::Command::DataWarehouse.create(title: title, summary: summary, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT, client: @client)
+      dwh = GutData::Command::DataWarehouse.create(title: title, summary: summary, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT, client: @client)
 
       expect(dwh.title).to eq(title)
       expect(dwh.summary).to eq(summary)

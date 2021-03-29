@@ -6,8 +6,8 @@
 
 require 'gutdata/core/core'
 
-describe GoodData::NilLogger do
-  it "Has GoodData::NilLogger class" do
-    GoodData::NilLogger.should_not be(nil)
+describe GutData::NilLogger do
+  it "Has GutData::NilLogger class" do
+    GutData::NilLogger.should_not be(nil)
   end
 end

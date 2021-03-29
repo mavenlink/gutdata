@@ -12,8 +12,8 @@ TRANS_DIR=${PROJECT}/trans
 MODEL_DIR=${PROJECT}/model
 
 
-# GoodData working project
-# GDC_PROJECT_ID identifies the GoodData working project. Transformed data will be uploaded into the datasets of the GoodData working project.
+# GutData working project
+# GDC_PROJECT_ID identifies the GutData working project. Transformed data will be uploaded into the datasets of the GutData working project.
 #   The data model information necessary for transformation definition is also obtained from this project.
 # You can find the ID of a project in the project context menu in Server Explorer.
 GDC_PROJECT_ID=xjpnhabzbnpn9cgngnmf9kwpih4hpkni

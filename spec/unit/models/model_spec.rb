@@ -7,13 +7,13 @@
 require 'pry'
 require 'gutdata/models/model'
 
-describe GoodData::Model do
+describe GutData::Model do
 
   before(:each) do
-    @base_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/test_project_model_spec.json")
-    @additional_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/model_module.json")
+    @base_blueprint = GutData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/test_project_model_spec.json")
+    @additional_blueprint = GutData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/model_module.json")
 
-    @blueprint_with_duplicate = GoodData::Model::ProjectBlueprint.new(
+    @blueprint_with_duplicate = GutData::Model::ProjectBlueprint.new(
       {
         title: "x",
         datasets: [{
@@ -30,7 +30,7 @@ describe GoodData::Model do
         }]
       })
 
-    @conflicting_blueprint = GoodData::Model::ProjectBlueprint.new(
+    @conflicting_blueprint = GutData::Model::ProjectBlueprint.new(
       {
         title: 'x',
         datasets: [{
@@ -50,8 +50,8 @@ describe GoodData::Model do
     
     first_dataset = @base_blueprint.find_dataset("dataset.devs").to_hash
     additional_blueprint = @additional_blueprint.find_dataset("dataset.devs").to_hash
-    stuff = GoodData::Model.merge_dataset_columns(first_dataset, additional_blueprint)
-    expect(GoodData::Model::ProjectBlueprint.new(stuff)).to be_valid
+    stuff = GutData::Model.merge_dataset_columns(first_dataset, additional_blueprint)
+    expect(GutData::Model::ProjectBlueprint.new(stuff)).to be_valid
 
     expect(stuff[:columns].include?({:type => :attribute, :id => "attr.region"})).to be_truthy
     expect(stuff[:columns].include?({:type => :anchor, :id => "attr.devs.dev_id", title: 'Dev', :folder=>"Anchor folder" })).to be_truthy
@@ -60,9 +60,9 @@ describe GoodData::Model do
   it "should pass when merging 2 columns with the same name if both columns are identical" do
     first_dataset = @base_blueprint.find_dataset("dataset.commits").to_hash
     additional_blueprint = @blueprint_with_duplicate.find_dataset("dataset.commits").to_hash
-    stuff = GoodData::Model.merge_dataset_columns(first_dataset, additional_blueprint)
+    stuff = GutData::Model.merge_dataset_columns(first_dataset, additional_blueprint)
     
-    expect(GoodData::Model::ProjectBlueprint.new(stuff)).to be_valid
+    expect(GutData::Model::ProjectBlueprint.new(stuff)).to be_valid
 
     expect(stuff[:columns].count).to eq 6
     expect(stuff[:columns].include?({ type: :fact, id: "fact.lines_changed", gd_data_type: 'INT', description: "Fact description"})).to be_truthy
@@ -72,7 +72,7 @@ describe GoodData::Model do
   it "should fail when merging" do
     first_dataset = @base_blueprint.find_dataset("dataset.commits").to_hash
     additional_blueprint = @conflicting_blueprint.find_dataset("dataset.commits").to_hash
-    expect { GoodData::Model.merge_dataset_columns(first_dataset, additional_blueprint) }.to raise_error
+    expect { GutData::Model.merge_dataset_columns(first_dataset, additional_blueprint) }.to raise_error
   end
 
   it "should be possible to merge directly whole bleuprints. Blueprint is changed in place when merge! is used" do

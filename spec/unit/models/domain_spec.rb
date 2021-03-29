@@ -7,7 +7,7 @@
 require 'gutdata/models/domain'
 require 'gutdata/helpers/csv_helper'
 
-describe GoodData::Domain do
+describe GutData::Domain do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
@@ -33,8 +33,8 @@ describe GoodData::Domain do
         :password => CryptoHelper.generate_password,
       }
 
-      @user = GoodData::Domain.add_user(args)
-      expect(@user).to be_an_instance_of(GoodData::Profile)
+      @user = GutData::Domain.add_user(args)
+      expect(@user).to be_an_instance_of(GutData::Profile)
     end
 
     it 'Should add user using instance method' do
@@ -44,7 +44,7 @@ describe GoodData::Domain do
       password = CryptoHelper.generate_password
 
       @user = domain.add_user(:login => login, :password => password, :first_name => 'X', :last_name => 'X')
-      expect(@user).to be_an_instance_of(GoodData::Profile)
+      expect(@user).to be_an_instance_of(GutData::Profile)
     end
   end
 
@@ -53,7 +53,7 @@ describe GoodData::Domain do
       domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
       user = domain.find_user_by_login(ConnectionHelper::DEFAULT_USERNAME)
       # user = @domain.add_user(args, client: @client)
-      expect(user).to be_an_instance_of(GoodData::Profile)
+      expect(user).to be_an_instance_of(GutData::Profile)
       expect(user.login).to eq ConnectionHelper::DEFAULT_USERNAME
     end
   end
@@ -63,7 +63,7 @@ describe GoodData::Domain do
       users = @domain.users
       expect(users).to be_instance_of(Enumerator)
       users.each do |user|
-        expect(user).to be_an_instance_of(GoodData::Profile)
+        expect(user).to be_an_instance_of(GutData::Profile)
       end
     end
 
@@ -72,7 +72,7 @@ describe GoodData::Domain do
       users = @domain.users(offset: 1)
       expect(users).to be_instance_of(Array)
       users.each do |user|
-        expect(user).to be_an_instance_of(GoodData::Profile)
+        expect(user).to be_an_instance_of(GutData::Profile)
       end
     end
   end
@@ -88,7 +88,7 @@ describe GoodData::Domain do
       expect(@domain.members?(list.map(&:login)).all?).to be_truthy
 
       res.select { |x| x[:type] == :successful }.map { |r| r[:user] }.each do |r|
-        expect(r).to be_an_instance_of(GoodData::Profile)
+        expect(r).to be_an_instance_of(GutData::Profile)
         r.delete
       end
     end
@@ -122,7 +122,7 @@ describe GoodData::Domain do
       user.login = 'svarovsky@gooddata.com'
       expect do
         @domain.create_user(user)
-      end.to raise_exception(GoodData::UserInDifferentDomainError)
+      end.to raise_exception(GutData::UserInDifferentDomainError)
     end
 
     it 'updates properties of a profile' do

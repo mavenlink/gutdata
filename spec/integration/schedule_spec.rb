@@ -7,7 +7,7 @@
 require 'gutdata/models/schedule'
 require 'gutdata/helpers/global_helpers'
 
-describe GoodData::Schedule do
+describe GutData::Schedule do
   SCHEDULE_ID = ScheduleHelper::SCHEDULE_ID
   SCHEDULE_URL = "/gdc/projects/#{ProjectHelper::PROJECT_ID}/schedules/#{SCHEDULE_ID}"
 
@@ -56,20 +56,20 @@ describe GoodData::Schedule do
       res.should_not be_nil
       res.should be_a_kind_of(Array)
       res.each do |schedule|
-        schedule.should be_a_kind_of(GoodData::Schedule)
+        schedule.should be_a_kind_of(GutData::Schedule)
       end
     end
 
     it 'Returns specific schedule when schedule ID passed' do
       res = @project.schedules(SCHEDULE_ID)
       res.should_not be_nil
-      res.should be_a_kind_of(GoodData::Schedule)
+      res.should be_a_kind_of(GutData::Schedule)
     end
 
     it 'Returns specific schedule when schedule URL passed' do
       res = @project.schedules(SCHEDULE_ID)
       res.should_not be_nil
-      res.should be_a_kind_of(GoodData::Schedule)
+      res.should be_a_kind_of(GutData::Schedule)
     end
   end
 
@@ -79,7 +79,7 @@ describe GoodData::Schedule do
       res.should_not be_nil
       res.should be_a_kind_of(Array)
       res.each do |schedule|
-        schedule.should be_a_kind_of(GoodData::Schedule)
+        schedule.should be_a_kind_of(GutData::Schedule)
       end
     end
   end
@@ -126,7 +126,7 @@ describe GoodData::Schedule do
     end
 
     it 'Throws exception when no cron is specified' do
-      data = GoodData::Helpers.deep_dup(@test_data)
+      data = GutData::Helpers.deep_dup(@test_data)
       data[:cron] = nil
       schedule = nil
       begin
@@ -139,7 +139,7 @@ describe GoodData::Schedule do
     end
 
     it 'Throws exception when no timezone specified' do
-      data = GoodData::Helpers.deep_dup(@test_data)
+      data = GutData::Helpers.deep_dup(@test_data)
       schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
       schedule.timezone = nil
       begin
@@ -153,7 +153,7 @@ describe GoodData::Schedule do
 
     it 'Throws exception when no schedule type is specified' do
       schedule = nil
-      data = GoodData::Helpers.deep_dup(@test_data)
+      data = GutData::Helpers.deep_dup(@test_data)
       begin
         schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
         schedule.type = nil
@@ -230,10 +230,10 @@ describe GoodData::Schedule do
       begin
         process = @project.deploy_process('./spec/data/gooddata_version_process/gooddata_version.zip',
                                            type: 'RUBY',
-                                           name: 'Test ETL zipped file GoodData Process')
+                                           name: 'Test ETL zipped file GutData Process')
         schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
         res = schedule.execute
-        expect(res).to be_an_instance_of(GoodData::Execution)
+        expect(res).to be_an_instance_of(GutData::Execution)
         expect([:ok, :error].include?(res.status)).to be_truthy
       ensure
         schedule && schedule.delete
@@ -245,10 +245,10 @@ describe GoodData::Schedule do
       begin
         process = @project.deploy_process('./spec/data/gooddata_version_process/gooddata_version.zip',
                                           type: 'RUBY',
-                                          name: 'Test ETL zipped file GoodData Process')
+                                          name: 'Test ETL zipped file GutData Process')
         schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
         res = schedule.execute(:wait => false)
-        expect(res).to be_an_instance_of(GoodData::Execution)
+        expect(res).to be_an_instance_of(GutData::Execution)
         expect([:scheduled, :running].include?(res.status)).to be_truthy
       ensure
         schedule && schedule.delete
@@ -613,11 +613,11 @@ describe GoodData::Schedule do
         
         schedule.save
         expect(schedule.hidden_params).to eq({
-          GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY => nil
+          GutData::Helpers::ENCODED_HIDDEN_PARAMS_KEY => nil
         })
         schedule2 = process.schedules.find { |s| s.uri == schedule.uri }
         expect(schedule2.to_update_payload['schedule']['hiddenParams']).to eq ({
-          GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY => nil
+          GutData::Helpers::ENCODED_HIDDEN_PARAMS_KEY => nil
         })
       ensure
         schedule && schedule.delete

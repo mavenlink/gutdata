@@ -8,24 +8,24 @@ require 'gutdata/connection'
 
 require_relative '../environment/environment'
 
-GoodData::Environment.load
+GutData::Environment.load
 
-module GoodData::Helpers
+module GutData::Helpers
   module ConnectionHelper
-    include GoodData::Environment::ConnectionHelper
+    include GutData::Environment::ConnectionHelper
 
     class << self
       # Creates connection using default credentials or supplied one
       #
       # @param [String] username Optional username
       # @param [String] password Optional password
-      def create_default_connection(username = GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME, password = GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD)
-        GoodData::connect(username, password, :server => GoodData::Environment::ConnectionHelper::DEFAULT_SERVER, :verify_ssl => OpenSSL::SSL::VERIFY_NONE)
+      def create_default_connection(username = GutData::Environment::ConnectionHelper::DEFAULT_USERNAME, password = GutData::Environment::ConnectionHelper::DEFAULT_PASSWORD)
+        GutData::connect(username, password, :server => GutData::Environment::ConnectionHelper::DEFAULT_SERVER, :verify_ssl => OpenSSL::SSL::VERIFY_NONE)
       end
 
       def disconnect
-        conn = GoodData.connection.connection
-        GoodData.disconnect
+        conn = GutData.connection.connection
+        GutData.disconnect
         puts conn.stats_table
       end
 
@@ -34,7 +34,7 @@ module GoodData::Helpers
         username = ENV['GD_GEM_USER'] || DEFAULT_USERNAME
         password = ENV['GD_GEM_PASSWORD'] || DEFAULT_PASSWORD
 
-        GoodData::connect(username, password)
+        GutData::connect(username, password)
       end
     end
   end

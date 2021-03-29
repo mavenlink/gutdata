@@ -6,12 +6,12 @@
 
 require 'gutdata/models/report_data_result'
 
-describe GoodData::ReportDataResult do
+describe GutData::ReportDataResult do
 
   before(:each) do
     data = JSON.parse(File.read('./spec/data/reports/report_1.json'))
-    @result = GoodData::ReportDataResult.from_xtab(data)
-    @result2 = GoodData::ReportDataResult.from_xtab(data)
+    @result = GutData::ReportDataResult.from_xtab(data)
+    @result2 = GutData::ReportDataResult.from_xtab(data)
   end
 
   it 'should compute columns' do
@@ -98,7 +98,7 @@ describe GoodData::ReportDataResult do
 
   it 'should work with left attribute reports' do
     data = JSON.parse(File.read('./spec/data/reports/left_attr_report.json'))
-    result = GoodData::ReportDataResult.from_xtab(data)
+    result = GutData::ReportDataResult.from_xtab(data)
     expect(result.left_headers).to eq [["jirka"], ["petr"], ["tomas"]]
     expect(result.size).to eq [4, 2]
     expect(result.data_size).to eq [3, 1]
@@ -106,7 +106,7 @@ describe GoodData::ReportDataResult do
 
   it 'should work with left attribute reports' do
     data = JSON.parse(File.read('./spec/data/reports/top_attr_report.json'))
-    result = GoodData::ReportDataResult.from_xtab(data)
+    result = GutData::ReportDataResult.from_xtab(data)
     expect(result.size).to eq [2, 4]
     expect(result.data_size).to eq [1, 3]
     expect(result.left_headers).to eq [["Values"]]
@@ -115,9 +115,9 @@ describe GoodData::ReportDataResult do
 
   it 'should fail when comparing two different reports' do
     data = JSON.parse(File.read('./spec/data/reports/left_attr_report.json'))
-    a = GoodData::ReportDataResult.from_xtab(data)
+    a = GutData::ReportDataResult.from_xtab(data)
     data = JSON.parse(File.read('./spec/data/reports/top_attr_report.json'))
-    b = GoodData::ReportDataResult.from_xtab(data)
+    b = GutData::ReportDataResult.from_xtab(data)
     expect(a == b).to be_falsey
   end
 
@@ -133,7 +133,7 @@ describe GoodData::ReportDataResult do
 
   describe '#data' do
     it 'should return just data portion' do
-      expect(@result.data.is_a?(GoodData::ReportDataResult)).to be_truthy
+      expect(@result.data.is_a?(GutData::ReportDataResult)).to be_truthy
       expect(@result.data.to_a).to eq [[25, nil, nil],
                                        [nil, nil, 15],
                                        [nil, 25, nil]]
@@ -171,10 +171,10 @@ describe GoodData::ReportDataResult do
   describe '#diff' do
     it 'should support diffing' do
       data = JSON.parse(File.read('./spec/data/reports/left_attr_report.json'))
-      a = GoodData::ReportDataResult.from_xtab(data)
-      c = GoodData::ReportDataResult.from_xtab(data)
+      a = GutData::ReportDataResult.from_xtab(data)
+      c = GutData::ReportDataResult.from_xtab(data)
       data = JSON.parse(File.read('./spec/data/reports/top_attr_report.json'))
-      b = GoodData::ReportDataResult.from_xtab(data)
+      b = GutData::ReportDataResult.from_xtab(data)
       expect {a - b}.to raise_exception
       expect(a - c).to be_empty
     end
@@ -183,7 +183,7 @@ describe GoodData::ReportDataResult do
   describe 'one line reports' do
     it 'should work with one line metric. No attribtues.' do
       data = JSON.parse(File.read('./spec/data/reports/metric_only_one_line.json'))
-      a = GoodData::ReportDataResult.from_xtab(data)
+      a = GutData::ReportDataResult.from_xtab(data)
       expect(a.to_a).to eq [[nil, "sum of Age"],
                             ["sum of Age", 65]]
 

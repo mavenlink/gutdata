@@ -175,17 +175,17 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     end
   end
 
-  it 'should be possible to deploy and run zipped file and print GoodData::VERSION' do
+  it 'should be possible to deploy and run zipped file and print GutData::VERSION' do
     process = @project.deploy_process('./spec/data/gooddata_version_process/gooddata_version.zip',
                                       type: 'RUBY',
-                                      name: 'Test ETL zipped file GoodData Process')
+                                      name: 'Test ETL zipped file GutData Process')
     begin
       expect(process.schedules.count).to eq 0
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
       result = schedule.execute
       expect(result.status).to eq :ok
       log = result.log
-      expect(log.index('GoodData::VERSION - 0.6.')).not_to eq nil
+      expect(log.index('GutData::VERSION - 0.6.')).not_to eq nil
       expect(process.schedules.count).to eq 1
     ensure
       schedule && schedule.delete
@@ -196,7 +196,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   it 'should be possible to deploy and run directory and use nested parameters' do
     process = @project.deploy_process('./spec/data/ruby_params_process',
                                       type: 'RUBY',
-                                      name: 'Test ETL dir GoodData Process')
+                                      name: 'Test ETL dir GutData Process')
     begin
       expect(process.schedules.count).to eq 0
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first, params: COMPLEX_PARAMS)
@@ -215,7 +215,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   it 'should be possible to deploy and run directory and use nested hidden parameters' do
     process = @project.deploy_process('./spec/data/ruby_params_process',
                                       type: 'RUBY',
-                                      name: 'Test ETL dir GoodData Process')
+                                      name: 'Test ETL dir GutData Process')
     begin
       expect(process.schedules.count).to eq 0
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first, hidden_params: COMPLEX_PARAMS)

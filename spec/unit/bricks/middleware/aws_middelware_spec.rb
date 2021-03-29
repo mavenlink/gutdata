@@ -8,21 +8,21 @@ require 'gutdata/bricks/brick'
 require 'gutdata/bricks/bricks'
 require 'gutdata/bricks/middleware/aws_middleware'
 
-describe GoodData::Bricks::AWSMiddleware do
+describe GutData::Bricks::AWSMiddleware do
   it 'should do nothing if the key "aws_client" is not there at all' do
-    middleware = GoodData::Bricks::AWSMiddleware.new(app: lambda {|params| 'Doing nothing'})
+    middleware = GutData::Bricks::AWSMiddleware.new(app: lambda {|params| 'Doing nothing'})
     middleware.call({})
   end
 
   it 'should fail gracefully if value aws_client param not present even though the key is' do
-    middleware = GoodData::Bricks::AWSMiddleware.new(app: lambda {|params| 'Doing nothing'})
+    middleware = GutData::Bricks::AWSMiddleware.new(app: lambda {|params| 'Doing nothing'})
     expect do
       middleware.call('aws_client' => nil)
     end.to raise_exception 'Unable to connect to AWS. Parameter "aws_client" seems to be empty'
   end
 
   it 'should fail gracefully if value secret_access_key is missing' do
-    middleware = GoodData::Bricks::AWSMiddleware.new(app: lambda {|params| 'Doing nothing'})
+    middleware = GutData::Bricks::AWSMiddleware.new(app: lambda {|params| 'Doing nothing'})
     expect do
       middleware.call('aws_client' => {
         'access_key_id' => 'something'
@@ -31,7 +31,7 @@ describe GoodData::Bricks::AWSMiddleware do
   end
 
   it 'should fail gracefully if value access_key_id is missing' do
-    middleware = GoodData::Bricks::AWSMiddleware.new(app: lambda {|params| 'Doing nothing'})
+    middleware = GutData::Bricks::AWSMiddleware.new(app: lambda {|params| 'Doing nothing'})
     expect do
       middleware.call('aws_client' => {
         'secret_access_key' => 'something'
@@ -40,7 +40,7 @@ describe GoodData::Bricks::AWSMiddleware do
   end
 
   it "should preapre aws middleware for aws_client param" do
-    middleware = GoodData::Bricks::AWSMiddleware.new(app: lambda do |params|
+    middleware = GutData::Bricks::AWSMiddleware.new(app: lambda do |params|
       expect(params['aws_client']['s3_client']).to be_kind_of(AWS::S3)
     end)
     middleware.call('aws_client' => {

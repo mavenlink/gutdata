@@ -9,13 +9,13 @@ require 'gutdata/bricks/bricks'
 require 'gutdata/bricks/middleware/base_middleware'
 require 'pry'
 
-describe GoodData::Bricks do
-  it "Has GoodData::Bricks::Brick class" do
-    GoodData::Bricks::Brick.should_not == nil
+describe GutData::Bricks do
+  it "Has GutData::Bricks::Brick class" do
+    GutData::Bricks::Brick.should_not == nil
   end
 
   it "should be possible to use block as an app in pipeline" do
-    p = GoodData::Bricks::Pipeline.prepare([
+    p = GutData::Bricks::Pipeline.prepare([
       lambda { |params| puts "x" }
     ])
     p.call({})
@@ -23,7 +23,7 @@ describe GoodData::Bricks do
 
   describe "#load_defaults" do
     context "when you define a middleware with default_loaded_call and give it some defaults file with prefix" do
-      class TestMiddleWare < GoodData::Bricks::Middleware
+      class TestMiddleWare < GutData::Bricks::Middleware
         def initialize(options={})
           @config = 'spec/bricks/default-config.json'
           super(options)
@@ -50,7 +50,7 @@ describe GoodData::Bricks do
       end
 
       it "puts them into params" do
-        p = GoodData::Bricks::Pipeline.prepare([
+        p = GutData::Bricks::Pipeline.prepare([
           TestMiddleWare,
           TestBrick
         ])
@@ -92,7 +92,7 @@ describe GoodData::Bricks do
   # TODO: Better test pre and post so we are sure it is executed in right order
   it "should be possible to use instance both as middleware and app" do
 
-    class DummyMiddleware < GoodData::Bricks::Middleware
+    class DummyMiddleware < GutData::Bricks::Middleware
 
       def call(params)
         puts "pre"
@@ -102,7 +102,7 @@ describe GoodData::Bricks do
 
     end
 
-    p = GoodData::Bricks::Pipeline.prepare([
+    p = GutData::Bricks::Pipeline.prepare([
       DummyMiddleware.new,
       lambda { |params| puts "x" }
     ])

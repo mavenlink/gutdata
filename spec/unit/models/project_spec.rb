@@ -6,7 +6,7 @@
 
 require 'gutdata'
 
-describe GoodData::Project, :constraint => 'slow' do
+describe GutData::Project, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper::create_default_connection
     @project = ProjectHelper.get_default_project(:client => @client)
@@ -23,31 +23,31 @@ describe GoodData::Project, :constraint => 'slow' do
       expect(projects).to_not be_nil
       expect(projects).to be_a_kind_of(Array)
       projects.pmap do |project|
-        expect(project).to be_an_instance_of(GoodData::Project)
+        expect(project).to be_an_instance_of(GutData::Project)
       end
     end
 
     it 'Returns project if ID passed' do
       expect(@project).to_not be_nil
-      expect(@project).to be_a_kind_of(GoodData::Project)
+      expect(@project).to be_a_kind_of(GutData::Project)
       expect(@project.pid).to eq @project.pid
     end
 
     it 'Returns project if URL passed' do
       expect(@project).to_not be_nil
-      expect(@project).to be_a_kind_of(GoodData::Project)
+      expect(@project).to be_a_kind_of(GutData::Project)
       expect(@project.pid).to eq @project.pid
     end
 
     it 'Throws an exception when invalid format of URL passed' do
       invalid_url = '/gdc/invalid_url'
-      expect { GoodData::Project[invalid_url] }.to raise_error
+      expect { GutData::Project[invalid_url] }.to raise_error
     end
   end
 
   describe '#all' do
     it 'Returns all projects' do
-      projects = GoodData::Project.all(:client => @client)
+      projects = GutData::Project.all(:client => @client)
       expect(projects).to_not be_nil
       expect(projects).to be_a_kind_of(Array)
     end
@@ -57,7 +57,7 @@ describe GoodData::Project, :constraint => 'slow' do
     it 'Looks up for role by identifier' do
       role = @project.get_role_by_identifier('readOnlyUserRole')
       expect(role).to_not be_nil
-      expect(role).to be_a_kind_of(GoodData::ProjectRole)
+      expect(role).to be_a_kind_of(GutData::ProjectRole)
     end
   end
 
@@ -65,7 +65,7 @@ describe GoodData::Project, :constraint => 'slow' do
     it 'Looks up for role by summary' do
       role = @project.get_role_by_summary('read only user role')
       expect(role).to_not be_nil
-      expect(role).to be_a_kind_of(GoodData::ProjectRole)
+      expect(role).to be_a_kind_of(GutData::ProjectRole)
     end
   end
 
@@ -73,25 +73,25 @@ describe GoodData::Project, :constraint => 'slow' do
     it 'Looks up for role by title' do
       role = @project.get_role_by_title('Viewer')
       expect(role).to_not be_nil
-      expect(role).to be_a_kind_of(GoodData::ProjectRole)
+      expect(role).to be_a_kind_of(GutData::ProjectRole)
     end
   end
 
   describe "#member" do
-    it 'Returns GoodData::Membership when looking for existing user using login' do
+    it 'Returns GutData::Membership when looking for existing user using login' do
       res = @project.get_user(ConnectionHelper::DEFAULT_USERNAME)
-      expect(res).to be_instance_of(GoodData::Membership)
+      expect(res).to be_instance_of(GutData::Membership)
     end
 
-    it 'Returns GoodData::Membership when looking for existing user using URL' do
+    it 'Returns GutData::Membership when looking for existing user using URL' do
       res = @project.get_user(ConnectionHelper::DEFAULT_USER_URL)
-      expect(res).to be_instance_of(GoodData::Membership)
+      expect(res).to be_instance_of(GutData::Membership)
     end
 
-    it 'Returns GoodData::Membership when looking for existing user using GoodData::Profile' do
+    it 'Returns GutData::Membership when looking for existing user using GutData::Profile' do
       user = @project.members.first
       res = @project.get_user(user)
-      expect(res).to be_instance_of(GoodData::Membership)
+      expect(res).to be_instance_of(GutData::Membership)
     end
 
     it 'Returns null for non-existing user' do
@@ -111,7 +111,7 @@ describe GoodData::Project, :constraint => 'slow' do
       expect(res).to be_truthy
     end
 
-    it 'Returns true when looking for existing user using GoodData::Profile' do
+    it 'Returns true when looking for existing user using GutData::Profile' do
       user = @project.members.first
       res = @project.member?(user)
       expect(res).to be_truthy
@@ -136,7 +136,7 @@ describe GoodData::Project, :constraint => 'slow' do
   end
 
   describe '#members?' do
-    it 'Returns array of bools when looking for existing users using GoodData::Profile' do
+    it 'Returns array of bools when looking for existing users using GutData::Profile' do
       users = @project.members.take(10)
       res = @project.members?(users)
       expect(res.all?).to be_truthy
@@ -150,12 +150,12 @@ describe GoodData::Project, :constraint => 'slow' do
   end
 
   describe '#roles' do
-    it 'Returns array of GoodData::ProjectRole' do
+    it 'Returns array of GutData::ProjectRole' do
       roles = @project.roles
       expect(roles).to be_instance_of(Array)
 
       roles.each do |role|
-        expect(role).to be_instance_of(GoodData::ProjectRole)
+        expect(role).to be_instance_of(GutData::ProjectRole)
       end
     end
   end

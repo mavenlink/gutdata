@@ -6,10 +6,10 @@
 
 require 'gutdata'
 
-describe 'Create project using GoodData client', :constraint => 'slow' do
+describe 'Create project using GutData client', :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
-    @blueprint = GoodData::Model::ProjectBlueprint.build("My project from blueprint") do |p|
+    @blueprint = GutData::Model::ProjectBlueprint.build("My project from blueprint") do |p|
       p.add_date_dimension('created_on')
 
       p.add_dataset('dataset.users') do |d|
@@ -44,7 +44,7 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
   end
 
   it 'Should be able to remove grain and load the same data' do
-    updated_blueprint = GoodData::Model::ProjectBlueprint.build("My project from blueprint") do |p|
+    updated_blueprint = GutData::Model::ProjectBlueprint.build("My project from blueprint") do |p|
       p.add_date_dimension('created_on')
 
       p.add_dataset('dataset.users') do |d|

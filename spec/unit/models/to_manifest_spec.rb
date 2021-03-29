@@ -6,9 +6,9 @@
 
 require 'gutdata'
 
-include GoodData::Model
+include GutData::Model
 
-describe GoodData::Model::ToManifest do
+describe GutData::Model::ToManifest do
 
   before(:each) do
     @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
@@ -21,7 +21,7 @@ describe GoodData::Model::ToManifest do
 
   it 'blueprint can be set with date reference and default format is set' do
     skip('not yet')
-    blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+    blueprint = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_date_dimension("committed_on")
 
       p.add_dataset("repos") do |d|
@@ -30,12 +30,12 @@ describe GoodData::Model::ToManifest do
         d.add_date('opportunity_comitted', dataset: 'committed_on')
       end
     end
-    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'][2]['constraints']).to eq ({ "date" => GoodData::Model::DEFAULT_DATE_FORMAT })
+    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'][2]['constraints']).to eq ({ "date" => GutData::Model::DEFAULT_DATE_FORMAT })
   end
 
   it 'blueprint can be set with date reference and default format is set' do
     skip('not yet')
-    blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+    blueprint = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_date_dimension("committed_on")
 
       p.add_dataset("repos") do |d|
@@ -48,7 +48,7 @@ describe GoodData::Model::ToManifest do
   end
 
   it 'blueprint can handle date fact during creation of manifest' do
-    blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+    blueprint = GutData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_date_dimension("committed_on")
 
       p.add_dataset("repos") do |d|

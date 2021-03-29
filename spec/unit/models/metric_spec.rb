@@ -6,7 +6,7 @@
 
 require 'gutdata/models/metadata/metric'
 
-describe GoodData::Metric do
+describe GutData::Metric do
 
 
   RAW_DATA2 = {'metric' =>
@@ -45,8 +45,8 @@ describe GoodData::Metric do
                      'updated' => '2014-05-05 20:00:42',
                      'contributor' => '/gdc/account/profile/4e1e8cacc4989228e0ae531b30853248'}}}
 
-  USED_METRIC = GoodData::Metric.new(RAW_DATA2)
-  UNUSED_METRIC = GoodData::Metric.new(RAW_DATA3)
+  USED_METRIC = GutData::Metric.new(RAW_DATA2)
+  UNUSED_METRIC = GutData::Metric.new(RAW_DATA3)
 
   RAW_DATA = {'metric' =>
                 {'content' =>
@@ -68,7 +68,7 @@ describe GoodData::Metric do
                     'contributor' => '/gdc/account/profile/4e1e8cacc4989228e0ae531b30853248'}}}
 
   before(:each) do
-    @instance = GoodData::Metric.new(RAW_DATA)
+    @instance = GutData::Metric.new(RAW_DATA)
   end
 
   describe '#contain?' do

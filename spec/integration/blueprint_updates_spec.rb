@@ -6,10 +6,10 @@
 
 require 'gutdata'
 
-describe 'Create project using GoodData client', :constraint => 'slow' do
+describe 'Create project using GutData client', :constraint => 'slow' do
   before(:all) do    
     @client = ConnectionHelper.create_default_connection
-    @blueprint = GoodData::Model::ProjectBlueprint.from_json('./spec/data/blueprints/test_project_model_spec.json')
+    @blueprint = GutData::Model::ProjectBlueprint.from_json('./spec/data/blueprints/test_project_model_spec.json')
     @project = @client.create_project_from_blueprint(@blueprint, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
   end
 
@@ -18,7 +18,7 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
     @client.disconnect
   end
 
-  it 'Should create project using GoodData::Rest::Client#create_project' do
+  it 'Should create project using GutData::Rest::Client#create_project' do
   
     data = [
       ["repo_id", "repo_name"],

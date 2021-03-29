@@ -4,14 +4,14 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-module GoodData
+module GutData
   module Environment
     module ConnectionHelper
       set_const :GD_PROJECT_TOKEN, ENV["GD_PROJECT_TOKEN"]
 
       set_const :DEFAULT_USERNAME, "svarovsky@gooddata.com"
       set_const :TEST_USERNAME, "john.doe@gooddata.com"
-      set_const :DEFAULT_PASSWORD, GoodData::Helpers.decrypt('9m5Fe6WIxtkoG9vi2CanKm/CmZMLTpGYzr2duXh75m8=\n', ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY'])
+      set_const :DEFAULT_PASSWORD, GutData::Helpers.decrypt('9m5Fe6WIxtkoG9vi2CanKm/CmZMLTpGYzr2duXh75m8=\n', ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY'])
       set_const :DEFAULT_DOMAIN, 'svarovsky-test'
       set_const :DEFAULT_USER_URL, '/gdc/account/profile/6e123be5a53dd863df5cf280fdb9c1fd'
       set_const :DEFAULT_SERVER, 'https://staging3.getgooddata.com'

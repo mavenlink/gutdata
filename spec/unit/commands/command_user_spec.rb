@@ -6,7 +6,7 @@
 
 require 'gutdata/commands/user'
 
-describe GoodData::Command::User do
+describe GutData::Command::User do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
   end
@@ -15,14 +15,14 @@ describe GoodData::Command::User do
     @client.disconnect
   end
 
-  it "Is Possible to create GoodData::Command::Membership instance" do
-    cmd = GoodData::Command::User.new()
-    cmd.should be_a(GoodData::Command::User)
+  it "Is Possible to create GutData::Command::Membership instance" do
+    cmd = GutData::Command::User.new()
+    cmd.should be_a(GutData::Command::User)
   end
 
   describe "#show" do
     it "Shows profile" do
-      GoodData::Command::User.show(:client => @client)
+      GutData::Command::User.show(:client => @client)
     end
   end
 end
