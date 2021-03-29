@@ -149,3 +149,10 @@ Replace all with "GutData"
 Search for "Copyright (c) 2010-2015 GutData Corporation. All rights reserved."
 310 results in 310 files (exclude this file)
 Replace all with "Copyright (c) 2010-2015 GoodData Corporation. All rights reserved."
+
+Delete files: aws_middleware.rb and aws_middleware_spec.rb
+Rename gooddata_middleware_spec.rb to gutdata_middleware_spec.rb
+
+Search for "gooddata_middleware"
+1 result in 1 file
+Rename to "gutdata_middleware"

@@ -6,7 +6,7 @@
 
 require 'gutdata/bricks/brick'
 require 'gutdata/bricks/bricks'
-require 'gutdata/bricks/middleware/gooddata_middleware'
+require 'gutdata/bricks/middleware/gutdata_middleware'
 
 describe GutData::Bricks::GutDataMiddleware do
   it "Has GutData::Bricks::GutDataMiddleware class" do
