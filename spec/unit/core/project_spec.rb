@@ -4,9 +4,9 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'gooddata/connection'
-require 'gooddata/core/project'
-require 'gooddata/models/project'
+require 'gutdata/connection'
+require 'gutdata/core/project'
+require 'gutdata/models/project'
 
 describe 'GoodData - project' do
   before(:each) do

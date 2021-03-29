@@ -6,9 +6,9 @@
 
 require 'highline'
 
-require 'gooddata/cli/terminal'
-require 'gooddata/commands/auth'
-require 'gooddata/helpers/auth_helpers'
+require 'gutdata/cli/terminal'
+require 'gutdata/commands/auth'
+require 'gutdata/helpers/auth_helpers'
 
 describe GoodData::Command::Auth do
   ORIG_TERMINAL = GoodData::CLI::DEFAULT_TERMINAL unless const_defined?(:ORIG_TERMINAL)

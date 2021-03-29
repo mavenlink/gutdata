@@ -9,7 +9,7 @@ require 'multi_json'
 require 'pmap'
 
 # Local requires
-require 'gooddata/models/models'
+require 'gutdata/models/models'
 
 require_relative '../environment/environment'
 

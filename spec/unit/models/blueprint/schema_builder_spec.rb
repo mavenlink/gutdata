@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'pry'
-require 'gooddata/models/model'
+require 'gutdata/models/model'
 
 describe GoodData::Model::SchemaBuilder do
 

@@ -5,9 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 
-require 'gooddata/models/profile'
-require 'gooddata/models/domain'
-require 'gooddata/models/project'
+require 'gutdata/models/profile'
+require 'gutdata/models/domain'
+require 'gutdata/models/project'
 
 describe GoodData::Profile do
   before(:each) do

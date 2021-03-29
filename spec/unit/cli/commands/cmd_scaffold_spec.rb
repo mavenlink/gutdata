@@ -6,7 +6,7 @@
 
 require 'fileutils'
 
-require 'gooddata/cli/cli'
+require 'gutdata/cli/cli'
 
 describe 'GoodData::CLI - scaffold', :broken => true do
   TEST_PROJECT_NAME = 'test-project'

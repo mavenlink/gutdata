@@ -6,7 +6,7 @@
 
 require 'tempfile'
 
-require 'gooddata/core/rest'
+require 'gutdata/core/rest'
 
 describe GoodData do
   before(:each) do

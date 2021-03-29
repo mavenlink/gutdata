@@ -4,9 +4,9 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'gooddata/bricks/brick'
-require 'gooddata/bricks/bricks'
-require 'gooddata/bricks/middleware/gooddata_middleware'
+require 'gutdata/bricks/brick'
+require 'gutdata/bricks/bricks'
+require 'gutdata/bricks/middleware/gooddata_middleware'
 
 describe GoodData::Bricks::GoodDataMiddleware do
   it "Has GoodData::Bricks::GoodDataMiddleware class" do

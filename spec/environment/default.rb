@@ -4,9 +4,9 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'gooddata/extensions/object'
+require 'gutdata/extensions/object'
 
-require 'gooddata/helpers/global_helpers'
+require 'gutdata/helpers/global_helpers'
 
 module GoodData
   module Environment

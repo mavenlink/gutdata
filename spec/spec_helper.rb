@@ -4,7 +4,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'simplecov'
 require 'pmap'
 require 'rspec'
 require 'pathname'
@@ -73,23 +72,4 @@ RSpec.configure do |config|
   config.after(:suite) do
     # TODO: Delete test project
   end
-end
-
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-  SimpleCov::Formatter::HTMLFormatter
-]
-
-SimpleCov.start do
-  add_filter 'spec/'
-  add_filter 'test/'
-
-  add_group 'Bricks', 'lib/gooddata/bricks'
-  add_group 'Middleware', 'lib/gooddata/bricks/middleware'
-  add_group 'CLI', 'lib/gooddata/cli'
-  add_group 'Commands', 'lib/gooddata/commands'
-  add_group 'Core', 'lib/gooddata/core'
-  add_group 'Exceptions', 'lib/gooddata/exceptions'
-  add_group 'Extensions', 'lib/gooddata/extensions'
-  add_group 'Goodzilla', 'lib/gooddata/goodzilla'
-  add_group 'Models', 'lib/gooddata/models'
 end

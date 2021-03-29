@@ -4,8 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'gooddata/models/schedule'
-require 'gooddata/helpers/global_helpers'
+require 'gutdata/models/schedule'
+require 'gutdata/helpers/global_helpers'
 
 describe GoodData::Schedule do
   SCHEDULE_ID = ScheduleHelper::SCHEDULE_ID

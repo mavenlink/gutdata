@@ -73,7 +73,7 @@ logging_spec.rb (1)
 project_spec.rb (1)
 Replace all with "GutData"
 
-Search for "require 'gooddata"
+Search for "require 'gutdata"
 129 results in 95 files
 Replace all with "require 'gutdata"
 
@@ -132,7 +132,13 @@ gooddata_version.zip -> gutdata_version.zip
 .gooddata -> .gutdata
 spec/data/gooddata_version_process/ -> spec/data/gutdata_version_process/
 
-Second round of renames:
+Second round of renames (in whole directory):
 Search for "# Copyright (c) 2010-2015 GutData Corporation. All rights reserved."
 199 results in 199 files - all in lib/
 Replace all with "# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved."
+
+Case sensitive on
+Search for "require 'gooddata"
+128 results in 94 files
+Replace with "require 'gutdata"
+

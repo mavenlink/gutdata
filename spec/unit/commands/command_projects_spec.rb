@@ -4,7 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'gooddata/commands/project'
+require 'gutdata/commands/project'
 
 describe GoodData::Command::Project do
   before(:each) do

@@ -4,8 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'gooddata/models/domain'
-require 'gooddata/helpers/csv_helper'
+require 'gutdata/models/domain'
+require 'gutdata/helpers/csv_helper'
 
 describe GoodData::Domain do
   before(:each) do

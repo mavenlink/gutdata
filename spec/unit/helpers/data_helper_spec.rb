@@ -4,7 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'gooddata/helpers/data_helper'
+require 'gutdata/helpers/data_helper'
 
 describe GoodData::Helpers::DataSource do
   before :each do

@@ -4,7 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'gooddata/cli/cli'
+require 'gutdata/cli/cli'
 
 describe 'GoodData::CLI - run_ruby', :broken => true do
   describe 'run_ruby' do

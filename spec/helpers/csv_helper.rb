@@ -8,7 +8,7 @@
 require 'multi_json'
 
 # Local requires
-require 'gooddata/models/models'
+require 'gutdata/models/models'
 
 module GoodData::Helpers
   module CsvHelper

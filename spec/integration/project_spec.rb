@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'pmap'
-require 'gooddata'
+require 'gutdata'
 
 describe GoodData::Project, :constraint => 'slow' do
   before(:all) do
