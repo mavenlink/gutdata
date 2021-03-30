@@ -27,7 +27,7 @@ include GutData::Helpers
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
 RSpec.configure do |config|
-  config.deprecation_stream = File.open('deprecations.txt', 'w')
+  config.deprecation_stream = File.open('tmp/deprecations.txt', 'w')
 
   config.include BlueprintHelper
   config.include CliHelper
