@@ -49,7 +49,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'restforce', '~> 3.0.0'
   s.add_dependency 'rest-client', '~> 1.8', '>= 1.8.0'
   s.add_dependency 'rubyzip', '~> 1.1', '>= 1.1.7'
-  s.add_dependency 'salesforce_bulk_query', '~> 0.2', '>= 0.2.0'
   s.add_dependency 'terminal-table', '~> 1.5', '>= 1.5.2'
   s.add_dependency 'thread_safe'
 end
