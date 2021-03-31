@@ -1,5 +1,0 @@
-require_relative '../../gutdata/bricks/bricks'
-
-require_relative './mybrick'
-
-GutData::Bricks::Pipeline.prepare([LoggerMiddleware, BenchMiddleware, GutDataMiddleware, MyBrick])

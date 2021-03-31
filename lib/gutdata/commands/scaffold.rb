@@ -42,27 +42,6 @@ module GutData
             end
           end
         end
-
-        # Scaffolds new brick
-        # TODO: Add option for custom output dir
-        def brick(name)
-          fail ArgumentError, 'No name specified' if name.nil?
-
-          FileUtils.mkdir(name)
-          FileUtils.cd(name) do
-            input = File.read(TEMPLATES_PATH + 'bricks/brick.rb.erb')
-            eruby = Erubis::Eruby.new(input)
-            File.open('brick.rb', 'w') do |f|
-              f.write(eruby.result)
-            end
-
-            input = File.read(TEMPLATES_PATH + 'bricks/main.rb.erb')
-            eruby = Erubis::Eruby.new(input)
-            File.open('main.rb', 'w') do |f|
-              f.write(eruby.result)
-            end
-          end
-        end
       end
     end
   end
