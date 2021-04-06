@@ -12,7 +12,6 @@ module GutData
 end
 
 # Modules
-require_relative 'gutdata/bricks/bricks'
 require_relative 'gutdata/commands/commands'
 require_relative 'gutdata/core/core'
 require_relative 'gutdata/data/data'

@@ -12,7 +12,7 @@ require 'gutdata/models/models'
 
 module GutData::Helpers
   module CsvHelper
-    CSV_PATH_EXPORT = 'out.txt'
+    CSV_PATH_EXPORT = 'tmp/out.txt'
     CSV_PATH_IMPORT = File.join(File.dirname(__FILE__), '..', 'data', 'users.csv')
   end
 end
