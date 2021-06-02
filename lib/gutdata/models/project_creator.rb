@@ -63,7 +63,7 @@ module GutData
           if !chunks.nil? && !dry_run
             chunks['updateScript']['maqlDdlChunks'].each do |chunk|
               result = project.execute_maql(chunk)
-              fail 'Creating dataset failed' if result['wTaskStatus']['status'] == 'ERROR'
+              raise result['wTaskStatus']['messages'].to_s if result['wTaskStatus']['status'] == 'ERROR'
             end
           end
           chunks
