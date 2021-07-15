@@ -191,7 +191,7 @@ module GutData
           begin
             at_exit { disconnect if @user }
           rescue RestClient::Unauthorized
-            GutData.logger.info 'Already logged out'
+            GutData.logger.debug 'Already logged out'
           ensure
             @at_exit_handler_installed = true
           end
@@ -203,11 +203,11 @@ module GutData
           get('/gdc/account/token', @request_params)
 
           @user = get(get('/gdc/app/account/bootstrap')['bootstrapResource']['accountSetting']['links']['self'])
-          GutData.logger.info("Connected using SST to server #{@server.url} to profile \"#{@user['accountSetting']['login']}\"")
+          GutData.logger.debug("Connected using SST to server #{@server.url} to profile \"#{@user['accountSetting']['login']}\"")
           @auth = {}
           refresh_token :dont_reauth => true
         else
-          GutData.logger.info("Connected using username \"#{username}\" to server #{@server.url}")
+          GutData.logger.debug("Connected using username \"#{username}\" to server #{@server.url}")
           credentials = Connection.construct_login_payload(username, password)
           generate_session_id
           @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
@@ -215,13 +215,13 @@ module GutData
           refresh_token :dont_reauth => true
           @user = get(@auth['profile'])
         end
-        GutData.logger.info('Connection successful')
+        GutData.logger.debug('Connection successful')
       rescue RestClient::Unauthorized => e
-        GutData.logger.info('Bad Login or Password')
-        GutData.logger.info('Connection failed')
+        GutData.logger.debug('Bad Login or Password')
+        GutData.logger.debug('Connection failed')
         raise e
       rescue RestClient::Forbidden => e
-        GutData.logger.info('Connection failed')
+        GutData.logger.debug('Connection failed')
         raise e
       end
 
@@ -234,7 +234,7 @@ module GutData
           clear_session_id
           delete url if url
         rescue RestClient::Unauthorized
-          GutData.logger.info 'Already disconnected'
+          GutData.logger.debug 'Already disconnected'
         end
 
         @auth = nil
@@ -570,7 +570,7 @@ module GutData
         # if info_message given, log it with request_id (given or generated)
         if options[:info_message]
           request_id = options[:request_id] || generate_request_id
-          GutData.logger.info "#{options[:info_message]} Request id: #{request_id}"
+          GutData.logger.debug "#{options[:info_message]} Request id: #{request_id}"
         end
         options
       end

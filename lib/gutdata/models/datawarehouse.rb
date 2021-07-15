@@ -17,7 +17,7 @@ module GutData
       # - :auth_token (mandatory)
       # - :summary
       def create(opts)
-        GutData.logger.info "Creating warehouse #{opts[:title]}"
+        GutData.logger.debug "Creating warehouse #{opts[:title]}"
 
         c = client(opts)
         fail ArgumentError, 'No :client specified' if c.nil?

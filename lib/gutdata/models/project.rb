@@ -115,7 +115,7 @@ module GutData
       # - :template (default /projects/blank)
       #
       def create(opts = { :client => GutData.connection }, &block)
-        GutData.logger.info "Creating project #{opts[:title]}"
+        GutData.logger.debug "Creating project #{opts[:title]}"
 
         c = client(opts)
         fail ArgumentError, 'No :client specified' if c.nil?
@@ -928,7 +928,7 @@ module GutData
       dry_run = opts[:dry_run]
 
       if opts[:purge]
-        GutData.logger.info 'Purging old project definitions'
+        GutData.logger.debug 'Purging old project definitions'
         reports.peach(&:purge_report_of_unused_definitions!)
       end
 
@@ -947,31 +947,31 @@ module GutData
           new_item = item.replace(mapping)
           if new_item.json != item.json
             if dry_run
-              GutData.logger.info "Would save #{new_item.uri}. Running in dry run mode"
+              GutData.logger.debug "Would save #{new_item.uri}. Running in dry run mode"
             else
-              GutData.logger.info "Saving #{new_item.uri}"
+              GutData.logger.debug "Saving #{new_item.uri}"
               new_item.save
             end
           end
         end
       end
 
-      GutData.logger.info 'Replacing hidden metrics'
+      GutData.logger.debug 'Replacing hidden metrics'
       local_metrics = rds.pmapcat { |rd| rd.using('metric') }.select { |m| m['deprecated'] == '1' }
       puts "Found #{local_metrics.count} metrics"
       local_metrics.pmap { |m| metrics(m['link']) }.peach do |item|
         new_item = item.replace(mapping)
         if new_item.json != item.json
           if dry_run
-            GutData.logger.info "Would save #{new_item.uri}. Running in dry run mode"
+            GutData.logger.debug "Would save #{new_item.uri}. Running in dry run mode"
           else
-            GutData.logger.info "Saving #{new_item.uri}"
+            GutData.logger.debug "Saving #{new_item.uri}"
             new_item.save
           end
         end
       end
 
-      GutData.logger.info 'Replacing variable values'
+      GutData.logger.debug 'Replacing variable values'
       variables.each do |var|
         var.values.peach do |val|
           val.replace(mapping).save unless dry_run

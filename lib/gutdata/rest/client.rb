@@ -103,7 +103,7 @@ module GutData
           end
 
           client = Client.new(new_opts)
-          GutData.logger.info("Connected to server with webdav path #{client.user_webdav_path}")
+          GutData.logger.debug("Connected to server with webdav path #{client.user_webdav_path}")
 
           if client
             at_exit do
