@@ -87,7 +87,7 @@ module GutData
             new_opts[:password] = password
           end
 
-          new_opts = { verify_ssl: true }.merge(new_opts)
+          new_opts = { verify_ssl: false }.merge(new_opts)
           if username.is_a?(Hash) && username[:cookies]
             new_opts[:sst_token] = username[:cookies]['GDCAuthSST']
             new_opts[:cookies] = username[:cookies]
