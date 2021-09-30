@@ -81,7 +81,7 @@ module GutData
 
       DEFAULT_LOGIN_PAYLOAD = {
         :headers => DEFAULT_HEADERS,
-        :verify_ssl => false
+        :verify_ssl => true
       }
 
       RETRYABLE_ERRORS = [
@@ -184,7 +184,6 @@ module GutData
         headers = options[:headers] || {}
 
         options = options.merge(headers)
-        options = options.merge({ verify_ssl: false })
         @server = RestClient::Resource.new server, options
 
         # Install at_exit handler first

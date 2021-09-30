@@ -116,8 +116,7 @@ module GutData
       url = sso_url(login, provider)
 
       params = {
-        :x_gdc_request => "#{GutData::Rest::Connection.generate_string}:#{GutData::Rest::Connection.generate_string}",
-        :verify_ssl => false,
+        :x_gdc_request => "#{GutData::Rest::Connection.generate_string}:#{GutData::Rest::Connection.generate_string}"
       }
 
       RestClient.get url, params do |response, _request, _result|
