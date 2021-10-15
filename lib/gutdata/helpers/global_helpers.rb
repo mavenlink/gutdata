@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #
-# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -14,6 +14,9 @@ require_relative 'global_helpers_params'
 
 module GutData
   module Helpers
+    extend Hashie::Extensions::StringifyKeys::ClassMethods
+    extend Hashie::Extensions::SymbolizeKeys::ClassMethods
+
     class DeepMergeableHash < Hash
       include Hashie::Extensions::DeepMerge
     end
@@ -31,10 +34,10 @@ module GutData
         root = Pathname(options[:root] || '/')
         pwd = Pathname(pwd).expand_path
         loop do
-          gf = pwd + 'Goodfile'
-          return gf if gf.exist?
+          gf = pwd + '.gooddata'
+          return gf if File.exist?(gf)
           pwd = pwd.parent
-          break unless root == pwd
+          break if root == pwd
         end
         nil
       end
@@ -55,21 +58,23 @@ module GutData
       def prepare_mapping(what, for_what = nil, options = {})
         project = options[:project] || (for_what.is_a?(Hash) && for_what[:project]) || fail('Project has to be provided')
         mapping = if what.is_a?(Hash)
-                    whats = what.keys
-                    to_whats = what.values
-                    whats.zip(to_whats)
-                  elsif what.is_a?(Array) && for_what.is_a?(Array)
-                    whats.zip(to_whats)
-                  else
-                    [[what, for_what]]
-                  end
+          whats = what.keys
+          to_whats = what.values
+          whats.zip(to_whats)
+        elsif what.is_a?(Array) && for_what.is_a?(Array)
+          whats.zip(to_whats)
+        else
+          [[what, for_what]]
+        end
         mapping.pmap { |f, t| [project.objects(f), project.objects(t)] }
       end
 
-      def get_path(an_object, path = [])
+      def get_path(an_object, path = [], default = nil)
         return an_object if path.empty?
+        return default if an_object.nil?
+
         path.reduce(an_object) do |a, e|
-          a && a.key?(e) ? a[e] : nil
+          a && a.key?(e) ? a[e] : default
         end
       end
 
@@ -147,81 +152,10 @@ module GutData
       end
 
       def interpolate_error_message(error)
+        return unless error && error['error'] && error['error']['message']
         message = error['error']['message']
         params = error['error']['parameters']
         sprintf(message, *params)
-      end
-
-      def transform_keys!(an_object)
-        return enum_for(:transform_keys!) unless block_given?
-        an_object.keys.each do |key|
-          an_object[yield(key)] = an_object.delete(key)
-        end
-        an_object
-      end
-
-      def symbolize_keys!(an_object)
-        transform_keys!(an_object) do |key|
-          begin
-            key.to_sym
-          rescue
-            key
-          end
-        end
-      end
-
-      def symbolize_keys(an_object)
-        transform_keys(an_object) do |key|
-          begin
-            key.to_sym
-          rescue
-            key
-          end
-        end
-      end
-
-      def transform_keys(an_object)
-        return enum_for(:transform_keys) unless block_given?
-        result = an_object.class.new
-        an_object.each_key do |key|
-          result[yield(key)] = an_object[key]
-        end
-        result
-      end
-
-      def deep_symbolize_keys(an_object)
-        deep_transform_keys(an_object) do |key|
-          begin
-            key.to_sym
-          rescue
-            key
-          end
-        end
-      end
-
-      def stringify_keys(an_object)
-        transform_keys(an_object, &:to_s)
-      end
-
-      def deep_stringify_keys(an_object)
-        deep_transform_keys(an_object, &:to_s)
-      end
-
-      def deep_transform_keys(an_object, &block)
-        _deep_transform_keys_in_object(an_object, &block)
-      end
-
-      def _deep_transform_keys_in_object(object, &block)
-        case object
-        when Hash
-          object.each_with_object({}) do |(key, value), result|
-            result[yield(key)] = _deep_transform_keys_in_object(value, &block)
-          end
-        when Array
-          object.map { |e| _deep_transform_keys_in_object(e, &block) }
-        else
-          object
-        end
       end
 
       def deep_dup(an_object)
@@ -261,6 +195,14 @@ module GutData
         m.times.map { n.times.map { val } }
       end
 
+      # Turns a boolean or string 'true' into boolean. Useful for bricks.
+      #
+      # @param [Object] Something
+      # @return [Boolean] Returns true or false if the input is 'true' or true
+      def to_boolean(param)
+        param == 'true' || param == true ? true : false
+      end
+
       # encrypts data with the given key. returns a binary data with the
       # unhashed random iv in the first 16 bytes
       def encrypt(data, key)
@@ -276,10 +218,10 @@ module GutData
         Base64.encode64(random_iv + encrypted)
       end
 
-      def decrypt(data_base_64, key)
+      def decrypt(database64, key)
         return '' if key.nil? || key.empty?
 
-        data = Base64.decode64(data_base_64)
+        data = Base64.decode64(database64)
 
         cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
         cipher.decrypt

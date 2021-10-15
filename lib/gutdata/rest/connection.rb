@@ -325,7 +325,7 @@ module GutData
           # avoid infinite loop GET fails with 401
           response = get(TOKEN_PATH, :x_gdc_authsst => sst_token, :dont_reauth => true)
           # Remove when TT sent in headers. Currently we need to parse from body
-          merge_headers!(:x_gdc_authtt => GoodData::Helpers.get_path(response, %w(userToken token)))
+          merge_headers!(:x_gdc_authtt => GutData::Helpers.get_path(response, %w(userToken token)))
         rescue Exception => e # rubocop:disable RescueException
           puts e.message
           raise e

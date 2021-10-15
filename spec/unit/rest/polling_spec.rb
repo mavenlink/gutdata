@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #
-# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -23,21 +23,33 @@ describe 'Behavior during polling and retries' do
     GutData::Rest::Connection.const_set(:RETRY_TIME_INITIAL_VALUE, 0)
     GutData::Rest::Client.const_set(:DEFAULT_SLEEP_INTERVAL, 0)
     stub_request(:get, "#{@server}/gdc")
-      .to_return(:body => {"about" => { "links" => [{ "link"=>"https://secure-di.gooddata.com/uploads", "summary"=>"User data staging area.", "category"=>"uploads", "title"=>"user-uploads" }]}}.to_json, :headers => { 'Content-Type' => "application/json" })
+      .to_return(
+        :body => {
+          'about' => {
+            'links' => [{
+              'link' => 'https://secure-di.gooddata.com/uploads',
+              'summary' => 'User data staging area.',
+              'category' => 'uploads',
+              'title' => 'user-uploads'
+            }]
+          }
+        }.to_json,
+        :headers => { 'Content-Type' => 'application/json' }
+      )
     stub_request(:post, "#{@server}/gdc/account/login")
-      .to_return(:body => { :userLogin => { :profile => "/profile/123" }}.to_json, :headers => { 'Content-Type' => "application/json" })
+      .to_return(:body => { :userLogin => { :profile => "/profile/123" } }.to_json, :headers => { 'Content-Type' => "application/json" })
     stub_request(:get, "#{@server}/gdc/account/token")
       .to_return(:body => {}.to_json, :headers => { 'Content-Type' => "application/json" })
     stub_request(:get, "#{@server}/profile/123")
       .to_return(:body => {}.to_json, :headers => { 'Content-Type' => "application/json" })
     stub_request(:get, "#{@server}/poll_test")
-      .to_return(:body => {stuff: :aaa}.to_json, :headers => { 'Content-Type' => "application/json"} )
+      .to_return(:body => { stuff: :aaa }.to_json, :headers => { 'Content-Type' => "application/json" })
     stub_request(:get, "#{@server}/too_many_reqs")
-      .to_return(:body => {}.to_json, :status => 429, :headers => { 'Content-Type' => "application/json"} )
+      .to_return(:body => {}.to_json, :status => 429, :headers => { 'Content-Type' => "application/json" })
     stub_request(:get, "#{@server}/out_of_service")
-      .to_return(:body => {}.to_json, :status => 503, :headers => { 'Content-Type' => "application/json"} )
+      .to_return(:body => {}.to_json, :status => 503, :headers => { 'Content-Type' => "application/json" })
     stub_request(:get, "#{@server}/internal_error")
-      .to_return(:body => {}.to_json, :status => 500, :headers => { 'Content-Type' => "application/json"} )
+      .to_return(:body => {}.to_json, :status => 500, :headers => { 'Content-Type' => "application/json" })
 
     @client = GutData.connect('aaa', 'bbbb')
   end
