@@ -25,7 +25,7 @@ module GutData
     #
     # ### Example
     #
-    #     # Turn of default logging
+    #     # Turn on default logging
     #     GoodData.logging_on
     #
     #     # Log only WARN and higher
