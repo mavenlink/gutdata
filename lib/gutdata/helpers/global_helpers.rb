@@ -9,6 +9,7 @@ require 'pathname'
 require 'hashie'
 require 'openssl'
 
+require_relative '../extensions/object'
 require_relative 'global_helpers_params'
 
 module GutData
