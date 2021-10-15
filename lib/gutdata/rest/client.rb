@@ -1,12 +1,13 @@
 # encoding: UTF-8
 #
-# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
 require 'rest-client'
 
 require_relative '../helpers/auth_helpers'
+require_relative '../helpers/global_helpers'
 
 require_relative 'connection'
 require_relative 'object_factory'
@@ -105,12 +106,6 @@ module GutData
           client = Client.new(new_opts)
           GutData.logger.debug("Connected to server with webdav path #{client.user_webdav_path}")
 
-          if client
-            at_exit do
-              puts client.connection.stats_table if client && client.connection && (GutData.stats_on? || client.stats_on?)
-            end
-          end
-
           # HACK: This line assigns class instance # if not done yet
           @@instance = client # rubocop:disable ClassVars
         end
@@ -196,7 +191,19 @@ module GutData
       end
 
       def disconnect
+        if stats_on?
+          puts "API call statistics to server #{@connection.server}"
+          puts @connection.stats_table
+        end
         @connection.disconnect
+      end
+
+      def warehouses(id = :all)
+        GutData::DataWarehouse[id, client: self]
+      end
+
+      def create_datawarehouse(opts = {})
+        GutData::DataWarehouse.create({ client: self }.merge(opts))
       end
 
       #######################
@@ -273,10 +280,10 @@ module GutData
 
       def user_webdav_path
         uri = if opts[:webdav_server]
-                opts[:webdav_server]
-              else
-                links.find { |i| i['category'] == 'uploads' }['link']
-              end
+          opts[:webdav_server]
+        else
+          links.find { |i| i['category'] == 'uploads' }['link']
+        end
         res = uri.chomp('/') + '/'
         res[0] == '/' ? "#{connection.server}#{res}" : res
       end
@@ -329,7 +336,7 @@ module GutData
             fail ExecutionLimitExceeded, "The time limit #{time_limit} secs for polling on #{link} is over"
           end
           sleep sleep_interval
-          GutData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
+          GutData::Rest::Client.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { connection.refresh_token }) do
             response = get(link, process: process)
           end
         end
@@ -367,14 +374,14 @@ module GutData
         @connection.download source_relative_path, target_file_path, options
       end
 
-      def download_from_user_webdav(source_relative_path, target_file_path, options = { client: GutData.client, project: project })
+      def download_from_user_webdav(source_relative_path, target_file_path, options = { client: GutData.client })
         download(source_relative_path, target_file_path, options.merge(:directory => options[:directory],
-                                                                       :staging_url => user_webdav_path))
+          :staging_url => user_webdav_path))
       end
 
       def upload_to_user_webdav(file, options = {})
         upload(file, options.merge(:directory => options[:directory],
-                                   :staging_url => user_webdav_path))
+          :staging_url => user_webdav_path))
       end
 
       def with_project(pid, &block)
