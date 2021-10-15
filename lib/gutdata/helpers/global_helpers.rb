@@ -17,6 +17,8 @@ module GutData
       include Hashie::Extensions::DeepMerge
     end
 
+    set_const :GD_MAX_RETRY, (ENV['GD_MAX_RETRY'] && ENV['GD_MAX_RETRY'].to_i) || 3
+
     class << self
       def error(msg)
         STDERR.puts(msg)
