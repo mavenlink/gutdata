@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #
-# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -13,16 +13,21 @@ require 'rest-client'
 require_relative '../version'
 require_relative '../exceptions/exceptions'
 
+require_relative '../helpers/global_helpers'
+
+require_relative 'phmap'
+
 module RestClient
   module AbstractResponse
     class MaxRedirectsReached < StandardError; end
 
     alias_method :old_follow_redirection, :follow_redirection
     def follow_redirection(request = nil, result = nil, &block)
-      fail 'Using monkey patched version of RestClient::AbstractResponse#follow_redirection which is guaranteed to be compatible only with RestClient 1.8.0' if RestClient::VERSION != '1.8.0'
-
-      # @args[:cookies] = request.cookies
-      # old_follow_redirection(request, result, &block)
+      if RestClient::VERSION != '1.8.0'
+        fail 'Using monkey patched version of RestClient::AbstractResponse#' \
+             'follow_redirection which is guaranteed to be compatible only ' \
+             'with RestClient 1.8.0'
+      end
 
       new_args = @args.dup
 
@@ -31,7 +36,7 @@ module RestClient
 
       new_args[:url] = url
       if request
-        fail MaxRedirectsReached if request.max_redirects == 0
+        fail MaxRedirectsReached if request.max_redirects.zero?
         new_args[:password] = request.password
         new_args[:user] = request.user
         new_args[:headers] = request.headers
@@ -58,6 +63,9 @@ end
 
 module GutData
   module Rest
+    class RestRetryError < StandardError
+    end
+
     # Wrapper of low-level HTTP/REST client/library
     class Connection
       include MonitorMixin
@@ -85,6 +93,7 @@ module GutData
       }
 
       RETRYABLE_ERRORS = [
+        Net::HTTPBadResponse,
         RestClient::InternalServerError,
         RestClient::RequestTimeout,
         RestClient::MethodNotAllowed,
@@ -103,7 +112,8 @@ module GutData
             'postUserLogin' => {
               'login' => username,
               'password' => password,
-              'remember' => 1
+              'remember' => 1,
+              'verify_level' => 2
             }
           }
           res
@@ -156,9 +166,11 @@ module GutData
 
       # backward compatibility
       alias_method :cookies, :request_params
+      alias_method :headers, :request_params
       attr_reader :server
       attr_reader :stats
       attr_reader :user
+      attr_reader :verify_ssl
 
       def initialize(opts)
         super()
@@ -170,9 +182,10 @@ module GutData
         @user = nil
         @server = nil
         @opts = opts
+        @verify_ssl = @opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
 
-        # Initialize cookies
-        reset_cookies!
+        # Initialize headers
+        reset_headers!
 
         @at_exit_handler_installed = nil
       end
@@ -199,7 +212,7 @@ module GutData
 
         # Reset old cookies first
         if options[:sst_token]
-          merge_cookies!('GDCAuthSST' => options[:sst_token])
+          merge_headers!(:x_gdc_authsst => options[:sst_token])
           get('/gdc/account/token', @request_params)
 
           @user = get(get('/gdc/app/account/bootstrap')['bootstrapResource']['accountSetting']['links']['self'])
@@ -232,7 +245,7 @@ module GutData
 
         begin
           clear_session_id
-          delete url if url
+          delete(url, :x_gdc_authsst => sst_token) if url
         rescue RestClient::Unauthorized
           GutData.logger.debug 'Already disconnected'
         end
@@ -241,9 +254,12 @@ module GutData
         @server = nil
         @user = nil
 
-        reset_cookies!
+        reset_headers!
       end
 
+      # @param what Address of the remote file.
+      # @param where Full path to the target file.
+      # @option [Bool] :url_encode ('true') URL encode the address.
       def download(what, where, options = {})
         # handle the path (directory) given in what
         ilast_slash = what.rindex('/')
@@ -271,49 +287,45 @@ module GutData
 
         staging_uri = options[:staging_url].to_s
 
-        base_url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
-        url = URI.join(base_url, CGI.escape(what)).to_s
+        base_url = dir.empty? ? staging_uri : URI.join("#{server}", staging_uri, "#{dir}/").to_s
+        sanitized_what = options[:url_encode] == false ? what : CGI.escape(what)
+        url = URI.join("#{server}", base_url, sanitized_what).to_s
 
-        b = proc do
+        b = proc do |f|
           raw = {
-            :headers => {
-              :user_agent => GutData.gem_version_string
-            },
+            :headers => @webdav_headers.merge(:x_gdc_authtt => headers[:x_gdc_authtt]),
             :method => :get,
             :url => url,
-            :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
-          }.merge(cookies)
-
-          if where.is_a?(IO) || where.is_a?(StringIO)
-            RestClient::Request.execute(raw) do |chunk, _x, response|
-              if response.code.to_s != '200'
-                fail ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
-              end
-              where.write chunk
+            :verify_ssl => verify_ssl
+          }
+          RestClient::Request.execute(raw) do |chunk, _x, response|
+            if response.code.to_s == '202'
+              fail RestRetryError, 'Got 202, retry'
+            elsif response.code.to_s != '200'
+              fail ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
             end
-          else
-            # Assume it is a string or file
-            File.open(where, 'w') do |f|
-              RestClient::Request.execute(raw) do |chunk, _x, response|
-                if response.code.to_s != '200'
-                  fail ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
-                end
-                f.write chunk
-              end
-            end
+            f.write chunk
           end
         end
 
-        res = nil
-        GutData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
-          res = b.call
+        GutData::Rest::Connection.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { refresh_token }, :on => RestRetryError) do
+          if where.is_a?(IO) || where.is_a?(StringIO)
+            b.call(where)
+          else
+            # Assume it is a string or file
+            File.open(where, 'w') do |f|
+              b.call(f)
+            end
+          end
         end
-        res
       end
 
       def refresh_token(_options = {})
         begin # rubocop:disable RedundantBegin
-          get TOKEN_PATH, :dont_reauth => true # avoid infinite loop GET fails with 401
+          # avoid infinite loop GET fails with 401
+          response = get(TOKEN_PATH, :x_gdc_authsst => sst_token, :dont_reauth => true)
+          # Remove when TT sent in headers. Currently we need to parse from body
+          merge_headers!(:x_gdc_authtt => GoodData::Helpers.get_path(response, %w(userToken token)))
         rescue Exception => e # rubocop:disable RescueException
           puts e.message
           raise e
@@ -331,103 +343,77 @@ module GutData
       #
       # @param uri [String] Target URI
       def delete(uri, options = {})
-        options = log_info(options)
-        GutData.logger.debug "DELETE: #{@server.url}#{uri}"
-        profile "DELETE #{uri}" do
-          b = proc do
-            params = fresh_request_params(options[:request_id])
-            begin
-              @server[uri].delete(params)
-            rescue RestClient::Exception => e
-              # log the error if it happens
-              log_error(e, uri, params)
-              raise e
-            end
-          end
-          process_response(options, &b)
-        end
+        request(:delete, uri, nil, options)
       end
 
       # Helper for logging error
       #
       # @param e [RuntimeException] Exception to log
       # @param uri [String] Uri on which the request failed
-      # @param uri [Hash] Additional params
-      def log_error(e, uri, params)
+      # @param params [Hash] Additional params
+      def log_error(e, uri, params, options = {})
         return if e.response && e.response.code == 401 && !uri.include?('token') && !uri.include?('login')
-        GutData.logger.error(format_error(e, params))
+
+        if options[:do_not_log].nil? || options[:do_not_log].index(e.class).nil?
+          GutData.logger.error(format_error(e, params))
+        end
+      end
+
+      def request(method, uri, data, options = {}, &user_block)
+        request_id = options[:request_id] || generate_request_id
+        log_info(options.merge(request_id: request_id))
+        payload = data.is_a?(Hash) ? data.to_json : data
+
+        GutData.rest_logger.info "#{method.to_s.upcase}: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
+        profile "#{method.to_s.upcase} #{uri}" do
+          b = proc do
+            params = fresh_request_params(request_id).merge(options)
+            begin
+              case method
+              when :get
+                @server[uri].get(params, &user_block)
+              when :put
+                @server[uri].put(payload, params)
+              when :delete
+                @server[uri].delete(params)
+              when :post
+                @server[uri].post(payload, params)
+              end
+            rescue RestClient::Exception => e
+              log_error(e, uri, params, options)
+              raise e
+            end
+          end
+          process_response(options, &b)
+        end
       end
 
       # HTTP GET
       #
       # @param uri [String] Target URI
       def get(uri, options = {}, &user_block)
-        options = log_info(options)
-        GutData.logger.debug "GET: #{@server.url}#{uri}, #{options}"
-        profile "GET #{uri}" do
-          b = proc do
-            params = fresh_request_params(options[:request_id]).merge(options)
-            begin
-              @server[uri].get(params, &user_block)
-            rescue RestClient::Exception => e
-              # log the error if it happens
-              log_error(e, uri, params)
-              raise e
-            end
-          end
-          process_response(options, &b)
-        end
+        request(:get, uri, nil, options, &user_block)
       end
 
       # HTTP PUT
       #
       # @param uri [String] Target URI
       def put(uri, data, options = {})
-        options = log_info(options)
-        payload = data.is_a?(Hash) ? data.to_json : data
-        GutData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
-        profile "PUT #{uri}" do
-          b = proc do
-            params = fresh_request_params(options[:request_id])
-            begin
-              @server[uri].put(payload, params)
-            rescue RestClient::Exception => e
-              # log the error if it happens
-              log_error(e, uri, params)
-              raise e
-            end
-          end
-          process_response(options, &b)
-        end
+        request(:put, uri, data, options)
       end
 
       # HTTP POST
       #
       # @param uri [String] Target URI
       def post(uri, data = nil, options = {})
-        options = log_info(options)
-        GutData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
-        profile "POST #{uri}" do
-          payload = data.is_a?(Hash) ? data.to_json : data
-          b = proc do
-            params = fresh_request_params(options[:request_id])
-            begin
-              @server[uri].post(payload, params)
-            rescue RestClient::Exception => e
-              # log the error if it happens
-              log_error(e, uri, params)
-              raise e
-            end
-          end
-          process_response(options, &b)
-        end
+        request(:post, uri, data, options)
       end
 
       # Reader method for SST token
       #
       # @return uri [String] SST token
       def sst_token
-        request_params[:cookies]['GDCAuthSST']
+        request_params[:x_gdc_authsst]
       end
 
       def stats_table(values = stats)
@@ -483,19 +469,20 @@ module GutData
       #
       # @return uri [String] TT token
       def tt_token
-        request_params[:cookies]['GDCAuthTT']
+        request_params[:x_gdc_authtt]
       end
 
-      # Uploads a file to GutData server
+      # Uploads a file to GoodData server
+
       def upload(file, options = {})
         dir = options[:directory] || ''
         staging_uri = options[:staging_url].to_s
-        url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
+        url = dir.empty? ? staging_uri : URI.join("#{server}", staging_uri, "#{dir}/").to_s
         # Make a directory, if needed
         create_webdav_dir_if_needed url unless dir.empty?
 
         webdav_filename = options[:filename] || File.basename(file)
-        do_stream_file URI.join(url, CGI.escape(webdav_filename)), file
+        do_stream_file URI.join("#{server}", url, CGI.escape(webdav_filename)), file
       end
 
       def generate_request_id
@@ -508,18 +495,17 @@ module GutData
         return if webdav_dir_exists?(url)
 
         method = :mkcol
-        GutData.logger.debug "#{method}: #{url}"
         b = proc do
           raw = {
             :method => method,
             :url => url,
-            :headers => @webdav_headers,
-            :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
-          }.merge(cookies)
+            :headers => @webdav_headers.merge(:x_gdc_authtt => headers[:x_gdc_authtt]),
+            :verify_ssl => verify_ssl
+          }
           RestClient::Request.execute(raw)
         end
 
-        GutData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+        GutData::Rest::Connection.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
           b.call
         end
       end
@@ -527,24 +513,36 @@ module GutData
       def do_stream_file(uri, filename, _options = {})
         GutData.logger.info "Uploading file user storage #{uri}"
 
-        to_upload = File.new(filename)
-        cookies_str = request_params[:cookies].map { |cookie| "#{cookie[0]}=#{cookie[1]}" }.join(';')
-        req = Net::HTTP::Put.new(uri.path, 'User-Agent' => GutData.gem_version_string, 'Cookie' => cookies_str)
-        req.content_length = to_upload.size
-        req.body_stream = to_upload
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = true
-        http.verify_mode = (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
+        request = RestClient::Request.new(:method => :put,
+          :url => uri.to_s,
+          :verify_ssl => verify_ssl,
+          :headers => @webdav_headers.merge(:x_gdc_authtt => headers[:x_gdc_authtt]),
+          :payload => File.new(filename, 'rb'))
 
-        response = nil
-        GutData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
-          response = http.start { |client| client.request(req) }
+        begin
+          request.execute
+        rescue => e
+          GutData.logger.error("Error when uploading file #{filename}", e)
+          raise e
         end
-        response
       end
 
-      def format_error(e, params)
-        "#{params[:x_gdc_request]} #{e.inspect}"
+      def format_error(e, params = {})
+        return e unless e.respond_to?(:response)
+        error = MultiJson.load(e.response)
+        message = GutData::Helpers.interpolate_error_message(error)
+        if error && error['error'] && error['error']['errorClass'] == 'com.gooddata.security.authorization.AuthorizationFailedException'
+          message = "#{message}, accessing with #{user['accountSetting']['login']}"
+        end
+        <<-ERR
+#{e}: #{message}
+Request ID: #{params[:x_gdc_request]}
+Full response:
+#{JSON.pretty_generate(error)}
+Backtrace:\n#{e.backtrace.join("\n")}
+        ERR
+      rescue MultiJson::ParseError
+        "Failed to parse #{e}. Raw response: #{e.response}"
       end
 
       # generate session id to be passed as the first part to
@@ -569,47 +567,54 @@ module GutData
       def log_info(options)
         # if info_message given, log it with request_id (given or generated)
         if options[:info_message]
-          request_id = options[:request_id] || generate_request_id
-          GutData.logger.debug "#{options[:info_message]} Request id: #{request_id}"
+          GutData.logger.debug "#{options[:info_message]} Request id: #{options[:request_id]}"
         end
-        options
       end
 
       # request heders with freshly generated request id
       def fresh_request_params(request_id = nil)
-        @request_params.merge(:x_gdc_request => request_id || generate_request_id)
+        tt = { :x_gdc_authtt => tt_token }
+        tt.merge(:x_gdc_request => request_id || generate_request_id)
       end
 
-      def merge_cookies!(cookies)
-        @request_params[:cookies].merge! cookies
+      def merge_headers!(headers)
+        @request_params.merge! headers.slice(:x_gdc_authtt, :x_gdc_authsst)
       end
 
       def process_response(options = {}, &block)
-        retries = options[:tries] || 3
-        opts = { tries: retries, refresh_token: proc { refresh_token unless options[:dont_reauth] } }.merge(options)
+        retries = options[:tries] || Helpers::GD_MAX_RETRY
+        process = options[:process]
+        dont_reauth = options[:dont_reauth]
+        options = options.reject { |k, _| [:process, :dont_reauth].include?(k) }
+        opts = { tries: retries, refresh_token: proc { refresh_token unless dont_reauth } }.merge(options)
         response = GutData::Rest::Connection.retryable(opts) do
           block.call
         end
-
-        merge_cookies! response.cookies
+        merge_headers! response.headers
         content_type = response.headers[:content_type]
-        return response if options[:process] == false
-
+        return response if process == false
         if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8'
           result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
-          GutData.logger.debug "Request ID: #{response.headers[:x_gdc_request]} - Response: #{result.inspect}"
+          GutData.rest_logger.debug "Request ID: #{response.headers[:x_gdc_request]} - Response: #{result.inspect}"
         elsif ['text/plain;charset=UTF-8', 'text/plain; charset=UTF-8', 'text/plain'].include?(content_type)
           result = response
-          GutData.logger.debug 'Response: plain text'
+          GutData.rest_logger.debug 'Response: plain text'
         elsif content_type == 'application/zip'
           result = response
-          GutData.logger.debug 'Response: a zipped stream'
+          GutData.rest_logger.debug 'Response: a zipped stream'
+        elsif content_type == 'text/csv'
+          result = response
+          GutData.rest_logger.debug 'Response: CSV text'
         elsif response.headers[:content_length].to_s == '0'
           result = nil
-          GutData.logger.debug 'Response: Empty response possibly 204'
+          GutData.rest_logger.debug 'Response: Empty response possibly 204'
         elsif response.code == 204
           result = nil
-          GutData.logger.debug 'Response: 204 no content'
+          GutData.rest_logger.debug 'Response: 204 no content'
+        elsif response.code == 200 && content_type.nil? && response.body.empty?
+          result = nil
+          # TMA-696
+          GutData.rest_logger.warn 'Got response status 200 but no content-type and body.'
         else
           fail "Unsupported response content type '%s':\n%s" % [content_type, response.to_str[0..127]]
         end
@@ -629,12 +634,12 @@ module GutData
         res
       end
 
-      def reset_cookies!
-        @request_params = { :cookies => {} }
+      def reset_headers!
+        @request_params = {}
       end
 
       def scrub_params(params, keys)
-        keys = keys.reduce([]) { |a, e| a.concat([e.to_s, e.to_sym]) }
+        keys = keys.reduce([]) { |acc, elem| acc.concat([elem.to_s, elem.to_sym]) }
 
         new_params = GutData::Helpers.deep_dup(params)
         GutData::Helpers.hash_dfs(new_params) do |k, _key|
@@ -644,61 +649,6 @@ module GutData
         end
         new_params
       end
-
-      # TODO: Store PH_MAP for wildcarding of URLs in reports in separate file
-      PH_MAP = [
-        ['/gdc/account/profile/{id}', %r{/gdc/account/profile/[\w]+}],
-        ['/gdc/account/login/{id}', %r{/gdc/account/login/[\w]+}],
-        ['/gdc/account/domains/{id}/users?login={login}', %r{/gdc/account/domains/[\w\d-]+/users\?login=[^&$]+}],
-        ['/gdc/account/domains/{id}', %r{/gdc/account/domains/[\w\d-]+}],
-
-        ['/gdc/app/projects/{id}/execute', %r{/gdc/app/projects/[\w]+/execute}],
-
-        ['/gdc/datawarehouse/instances/{id}', %r{/gdc/datawarehouse/instances/[\w]+}],
-        ['/gdc/datawarehouse/executions/{id}', %r{/gdc/datawarehouse/executions/[\w]+}],
-
-        ['/gdc/domains/{id}/segments/{segment}/synchronizeClients/results/{result}/details?offset={offset}&limit={limit}', %r{/gdc/domains/[\w]+/segments/[\w-]+/synchronizeClients/results/[\w]+/details/\?offset=[\d]+&limit=[\d]+}],
-        ['/gdc/domains/{id}/segments/{segment}/synchronizeClients/results/{result}', %r{/gdc/domains/[\w]+/segments/[\w-]+/synchronizeClients/results/[\w]+}],
-        ['/gdc/domains/{id}/segments/{segment}/', %r{/gdc/domains/[\w]+/segments/[\w-]+/}],
-        ['/gdc/domains/{id}/segments/{segment}', %r{/gdc/domains/[\w]+/segments/[\w-]+}],
-        ['/gdc/domains/{id}/clients?segment={segment}', %r{/gdc/domains/[\w]+/clients\?segment=[\w-]+}],
-        ['/gdc/domains/{id}/', %r{/gdc/domains/[\w]+/}],
-
-        ['/gdc/exporter/result/{id}/{id}', %r{/gdc/exporter/result/[\w]+/[\w]+}],
-
-        ['/gdc/internal/projects/{id}/objects/setPermissions', %r{/gdc/internal/projects/[\w]+/objects/setPermissions}],
-
-        ['/gdc/md/{id}/variables/item/{id}', %r{/gdc/md/[\w]+/variables/item/[\d]+}],
-        ['/gdc/md/{id}/validate/task/{id}', %r{/gdc/md/[\w]+/validate/task/[\w]+}],
-        ['/gdc/md/{id}/using2/{id}/{id}', %r{/gdc/md/[\w]+/using2/[\d]+/[\d]+}],
-        ['/gdc/md/{id}/using2/{id}', %r{/gdc/md/[\w]+/using2/[\d]+}],
-        ['/gdc/md/{id}/userfilters?users={users}', %r{/gdc/md/[\w]+/userfilters\?users=[/\w]+}],
-        ['/gdc/md/{id}/userfilters?count={count}&offset={offset}', %r{/gdc/md/[\w]+/userfilters\?count=[\d]+&offset=[\d]+}],
-        ['/gdc/md/{id}/usedby2/{id}/{id}', %r{/gdc/md/[\w]+/usedby2/[\d]+/[\d]+}],
-        ['/gdc/md/{id}/usedby2/{id}', %r{/gdc/md/[\w]+/usedby2/[\d]+}],
-        ['/gdc/md/{id}/tasks/{id}/status', %r{/gdc/md/[\w]+/tasks/[\w]+/status}],
-        ['/gdc/md/{id}/obj/{id}/validElements', %r{/gdc/md/[\w]+/obj/[\d]+/validElements(/)?(\?.*)?}],
-        ['/gdc/md/{id}/obj/{id}/elements', %r{/gdc/md/[\w]+/obj/[\d]+/elements(/)?(\?.*)?}],
-        ['/gdc/md/{id}/obj/{id}', %r{/gdc/md/[\w]+/obj/[\d]+}],
-        ['/gdc/md/{id}/etltask/{id}', %r{/gdc/md/[\w]+/etltask/[\w]+}],
-        ['/gdc/md/{id}/dataResult/{id}', %r{/gdc/md/[\w]+/dataResult/[\d]+}],
-        ['/gdc/md/{id}', %r{/gdc/md/[\w]+}],
-
-        ['/gdc/projects/{id}/users/{id}/roles', %r{/gdc/projects/[\w]+/users/[\w]+/roles}],
-        ['/gdc/projects/{id}/users/{id}/permissions', %r{/gdc/projects/[\w]+/users/[\w]+/permissions}],
-        ['/gdc/projects/{id}/users', %r{/gdc/projects/[\w]+/users}],
-        ['/gdc/projects/{id}/schedules/{id}/executions/{id}', %r{/gdc/projects/[\w]+/schedules/[\w]+/executions/[\w]+}],
-        ['/gdc/projects/{id}/schedules/{id}', %r{/gdc/projects/[\w]+/schedules/[\w]+}],
-        ['/gdc/projects/{id}/roles/{id}', %r{/gdc/projects/[\w]+/roles/[\d]+}],
-        ['/gdc/projects/{id}/model/view/{id}', %r{/gdc/projects/[\w]+/model/view/[\w]+}],
-        ['/gdc/projects/{id}/model/view', %r{/gdc/projects/[\w]+/model/view}],
-        ['/gdc/projects/{id}/model/diff/{id}', %r{/gdc/projects/[\w]+/model/diff/[\w]+}],
-        ['/gdc/projects/{id}/model/diff', %r{/gdc/projects/[\w]+/model/diff}],
-        ['/gdc/projects/{id}/dataload/processes/{id}/executions/{id}', %r{/gdc/projects/[\w]+/dataload/processes/[\w-]+/executions/[\w-]+}],
-        ['/gdc/projects/{id}/dataload/processes/{id}', %r{/gdc/projects/[\w]+/dataload/processes/[\w-]+}],
-        ['/gdc/projects/{id}/', %r{/gdc/projects/[\w]+/}],
-        ['/gdc/projects/{id}', %r{/gdc/projects/[\w]+}]
-      ]
 
       def update_stats(title, delta)
         synchronize do
@@ -740,25 +690,19 @@ module GutData
         method = :get
         GutData.logger.debug "#{method}: #{url}"
 
-        b = proc do
+        GutData::Rest::Connection.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
           raw = {
             :method => method,
             :url => url,
-            :headers => @webdav_headers,
-            :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
-          }.merge(cookies)
+            :headers => @webdav_headers.merge(:x_gdc_authtt => headers[:x_gdc_authtt]),
+            :verify_ssl => verify_ssl
+          }.merge(headers)
           begin
             RestClient::Request.execute(raw)
           rescue RestClient::Exception => e
             false if e.http_code == 404
           end
         end
-
-        res = nil
-        GutData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
-          res = b.call
-        end
-        res
       end
     end
   end
