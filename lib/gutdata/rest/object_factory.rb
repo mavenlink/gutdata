@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #
-# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -15,6 +15,8 @@ module GutData
     class ObjectFactory
       attr_accessor :client
       attr_accessor :connection
+      attr_accessor :objects
+      attr_accessor :resources
 
       # Initializes instance of factory
       #
