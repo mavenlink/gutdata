@@ -49,6 +49,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'pry', '~> 0.10', '>= 0.10.3'
   s.add_dependency 'rest-client', '>= 1.8.0', '< 2.1'
   s.add_dependency 'rubyzip', '~> 1.1', '>= 1.1.7'
-  s.add_dependency 'terminal-table', '~> 1.5', '>= 1.5.2'
+  s.add_dependency 'terminal-table', '~> 3.0.1'
   s.add_dependency 'thread_safe'
 end
