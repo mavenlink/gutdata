@@ -406,6 +406,22 @@ module GutData
       GutData::Dashboard[id, project: self, client: client]
     end
 
+    # Helper for getting analytical dashboards of a project
+    #
+    # @param id [String | Number | Object] Anything that you can pass to GutData::AnalyticalDashboard[id]
+    # @return [GutData::AnalyticalDashboard | Array<GutData::AnalyticalDashboard>] analytical dashboard instance or list
+    def analytical_dashboards(id = :all)
+      GutData::AnalyticalDashboard[id, project: self, client: client]
+    end
+
+    # Helper for getting visualization objects of a project
+    #
+    # @param id [String | Number | Object] Anything that you can pass to GutData::VisualizationObject[id]
+    # @return [GutData::VisualizationObject | Array<GutData::VisualizationObject>] visualization object instance or list
+    def visualization_objects(id = :all)
+      GutData::VisualizationObject[id, project: self, client: client]
+    end
+
     def data_permissions(id = :all)
       GutData::MandatoryUserFilter[id, client: client, project: self]
     end
