@@ -30,5 +30,35 @@ module GutData
         res
       end
     end
+
+    # Locks an object with all used objects. The types of objects that are affected by locks
+    # are analytical dashboards, visualization objects, and metrics. This means that if you lock a
+    # dashboard by this method all used visualization objects and metrics are also locked. If you
+    # lock a visualization object all used metrics are also locked. The current object is reloaded.
+    # This means that the #locked? will return true.
+    #
+    # @return [GutData::Mixin::Lockable]
+    def lock_with_dependencies!
+      using('visualizationObject').pmap { |link| project.visualization_objects(link['link']) }.reject(&:locked?).pmap(&:lock!)
+      using('analyticalDashboard').pmap { |link| project.analytical_dashboards(link['link']) }.reject(&:locked?).pmap(&:lock!)
+      using('metric').pmap { |link| project.metrics(link['link']) }.reject(&:locked?).pmap(&:lock!)
+      lock!
+    end
+
+    # Unlocks an object with all used objects. The types of objects that are affected by locks
+    # are  analytical dashboards, visualization objects, and metrics. This means that if you unlock a
+    # dashboard by this method all used visualization objects and metrics are also unlocked. If you
+    # unlock a visualization objects all used metrics are also unlocked. The current object is unlocked
+    # as well. Beware that certain objects might be in use in multiple contexts. For example one metric
+    # can be used in several visualization objects. This method performs no checks to determine if an
+    # object should stay locked or not.
+    #
+    # @return [GutData::Mixin::Lockable]
+    def unlock_with_dependencies!
+      using('visualizationObject').pmap { |link| project.visualization_objects(link['link']) }.select(&:locked?).pmap(&:unlock!)
+      using('analyticalDashboard').pmap { |link| project.analytical_dashboards(link['link']) }.select(&:locked?).pmap(&:unlock!)
+      using('metric').pmap { |link| project.metrics(link['link']) }.select(&:locked?).pmap(&:unlock!)
+      unlock!
+    end
   end
 end
