@@ -5,7 +5,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-# Backported from https://github.com/gooddata/gooddata-ruby/blob/6153ef930e089a3e7c98af63075d193884916070/lib/gooddata/models/metadata/analytical_visualization_object.rb
+# Backported from https://github.com/gooddata/gooddata-ruby/blob/6153ef930e089a3e7c98af63075d193884916070
 
 module GutData
   class AnalyticalVisualizationObject < GutData::MdObject
