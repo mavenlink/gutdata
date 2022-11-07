@@ -39,29 +39,29 @@ module GutData
       # Returns list of all clients or a particular client
       #
       # @param id [String|Symbol] Uri of the segment required or :all for all segments.
-      # @return [Array<GoodData::Segment>] List of segments for a particular domain
+      # @return [Array<GutData::Segment>] List of segments for a particular domain
       def [](id, opts = {})
-        # TODO: Replace with GoodData.get_client_and_project(opts)
+        # TODO: Replace with GutData.get_client_and_project(opts)
         project = opts[:project]
         fail 'Project has to be passed in options' unless project
-        fail 'Project has to be of type GoodData::Project' unless project.is_a?(GoodData::Project)
+        fail 'Project has to be of type GutData::Project' unless project.is_a?(GutData::Project)
         client = project.client
 
         results = client.get('/gdc/userGroups', params: { :project => project.pid, :user => opts[:user] }.compact)
-        groups = GoodData::Helpers.get_path(results, %w(userGroups items)).map { |i| client.create(GoodData::UserGroup, i, :project => project) }
+        groups = GutData::Helpers.get_path(results, %w(userGroups items)).map { |i| client.create(GutData::UserGroup, i, :project => project) }
         id == :all ? groups : groups.find { |g| g.obj_id == id || g.name == id }
       end
 
       # Create new user group
       #
-      # Should not be called directly. Use GoodData::Project.add_user_group.
+      # Should not be called directly. Use GutData::Project.add_user_group.
       # @param data [Hash] Initial data
       # @option data name [String]
       # @option data description [String]
-      # @option data project [GoodData::Project]
+      # @option data project [GutData::Project]
       # @return [UserGroup] Newly created user group
       def create(data)
-        new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
+        new_data = GutData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
           d['userGroup']['content']['name'] = data[:name]
           d['userGroup']['content']['description'] = data[:description]
           d['userGroup']['content']['project'] = data[:project].uri
@@ -69,7 +69,7 @@ module GutData
 
         client = data[:project].client
 
-        group = client.create(GoodData::UserGroup, GoodData::Helpers.stringify_keys(new_data))
+        group = client.create(GutData::UserGroup, GutData::Helpers.stringify_keys(new_data))
         group.project = data[:project]
         group
       end
@@ -159,9 +159,9 @@ module GutData
 
     # Gets Users with this Role
     #
-    # @return [Array<GoodData::Profile>] List of users
+    # @return [Array<GutData::Profile>] List of users
     def members
-      url = GoodData::Helpers.get_path(data, %w(links members))
+      url = GutData::Helpers.get_path(data, %w(links members))
       return [] unless url
       Enumerator.new do |y|
         loop do
@@ -170,9 +170,9 @@ module GutData
           res['userGroupMembers']['items'].each do |member|
             case member.keys.first
             when 'user'
-              y << client.create(GoodData::Profile, client.get(GoodData::Helpers.get_path(member, %w(user links self))), :project => project)
+              y << client.create(GutData::Profile, client.get(GutData::Helpers.get_path(member, %w(user links self))), :project => project)
             when 'userGroup'
-              y << client.create(UserGroup, client.get(GoodData::Helpers.get_path(member, %w(userGroup links self))), :project => project)
+              y << client.create(UserGroup, client.get(GutData::Helpers.get_path(member, %w(userGroup links self))), :project => project)
             end
           end
           url = res['userGroupMembers']['paging']['next']
