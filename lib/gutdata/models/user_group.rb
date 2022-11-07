@@ -36,36 +36,47 @@ module GutData
     }
 
     class << self
-      # Returns list of all segments or a particular segment
+      # Returns list of all clients or a particular client
       #
       # @param id [String|Symbol] Uri of the segment required or :all for all segments.
-      # @return [Array<GutData::Segment>] List of segments for a particular domain
+      # @return [Array<GoodData::Segment>] List of segments for a particular domain
       def [](id, opts = {})
-        # TODO: Replace with GutData.get_client_and_project(opts)
+        # TODO: Replace with GoodData.get_client_and_project(opts)
         project = opts[:project]
         fail 'Project has to be passed in options' unless project
-        fail 'Project has to be of type GutData::Project' unless project.is_a?(GutData::Project)
+        fail 'Project has to be of type GoodData::Project' unless project.is_a?(GoodData::Project)
         client = project.client
 
         results = client.get('/gdc/userGroups', params: { :project => project.pid, :user => opts[:user] }.compact)
-        groups = GutData::Helpers.get_path(results, %w(userGroups items)).map { |i| client.create(GutData::UserGroup, i, :project => project) }
+        groups = GoodData::Helpers.get_path(results, %w(userGroups items)).map { |i| client.create(GoodData::UserGroup, i, :project => project) }
         id == :all ? groups : groups.find { |g| g.obj_id == id || g.name == id }
       end
 
       # Create new user group
       #
+      # Should not be called directly. Use GoodData::Project.add_user_group.
       # @param data [Hash] Initial data
+      # @option data name [String]
+      # @option data description [String]
+      # @option data project [GoodData::Project]
       # @return [UserGroup] Newly created user group
       def create(data)
-        new_data = GutData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
+        new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
           d['userGroup']['content']['name'] = data[:name]
           d['userGroup']['content']['description'] = data[:description]
-          d['userGroup']['content']['project'] = data[:project].respond_to?(:uri) ? data[:project].uri : data[:project]
+          d['userGroup']['content']['project'] = data[:project].uri
         end
 
-        client.create(GutData::UserGroup, GutData::Helpers.deep_stringify_keys(new_data))
+        client = data[:project].client
+
+        group = client.create(GoodData::UserGroup, GoodData::Helpers.stringify_keys(new_data))
+        group.project = data[:project]
+        group
       end
 
+      # Constructs payload for user management/manipulation
+      #
+      # @return [Hash] Created payload
       # Constructs payload for user management/manipulation
       #
       # @return [Hash] Created payload
@@ -148,9 +159,9 @@ module GutData
 
     # Gets Users with this Role
     #
-    # @return [Array<GutData::Profile>] List of users
+    # @return [Array<GoodData::Profile>] List of users
     def members
-      url = GutData::Helpers.get_path(data, %w(links members))
+      url = GoodData::Helpers.get_path(data, %w(links members))
       return [] unless url
       Enumerator.new do |y|
         loop do
@@ -159,9 +170,9 @@ module GutData
           res['userGroupMembers']['items'].each do |member|
             case member.keys.first
             when 'user'
-              y << client.create(GutData::Profile, client.get(GutData::Helpers.get_path(member, %w(user links self))), :project => project)
+              y << client.create(GoodData::Profile, client.get(GoodData::Helpers.get_path(member, %w(user links self))), :project => project)
             when 'userGroup'
-              y << client.create(UserGroup, client.get(GutData::Helpers.get_path(member, %w(userGroup links self))), :project => project)
+              y << client.create(UserGroup, client.get(GoodData::Helpers.get_path(member, %w(userGroup links self))), :project => project)
             end
           end
           url = res['userGroupMembers']['paging']['next']
@@ -184,14 +195,15 @@ module GutData
     #
     # @return [UserGroup] Created or updated user group
     def save
-      res = if uri
-              # get rid of unsupprted keys
-              data = json['userGroup']
-              client.put(uri, 'userGroup' => data.except('meta', 'links'))
-            else
-              client.post('/gdc/userGroups', @json)
-            end
-      @json = client.get(res['uri'])
+      if uri
+        # get rid of unsupported keys
+        data = json['userGroup']
+        client.put(uri, 'userGroup' => data.except('meta', 'links'))
+        @json = client.get(uri)
+      else
+        response = client.post('/gdc/userGroups', @json)
+        @json = client.get(response['uri'])
+      end
       self
     end
 
