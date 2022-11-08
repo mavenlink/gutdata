@@ -192,6 +192,46 @@ module GutData
 
     alias_method :create_group, :add_user_group
 
+    def dashboard_user_groups(user_groups, dashboard)
+      group_dashboards = []
+      dashboard_grantees = dashboard.grantees['granteeURIs']['items'].select { |item| item['aclEntryURI']['grantee'].include?('/usergroups/') }
+
+      dashboard_grantees.each do |dashboard_grantee|
+        permission = dashboard_grantee['aclEntryURI']['permission']
+        group_id = dashboard_grantee['aclEntryURI']['grantee'].split('/').last
+        user_group = user_groups.select { |group| group.links['self'].split('/').last == group_id }.first
+        next unless user_group
+
+        group_dashboards << {
+          name: user_group.name,
+          user_group: user_group,
+          permission: permission
+        }
+      end
+      group_dashboards
+    end
+
+    def add_user_groups_to_dashboard(group_dashboards, dashboard, common_group_names, target_user_groups)
+      group_dashboards.each do |group_dashboard|
+        group_name = group_dashboard[:name]
+        next if common_group_names && common_group_names[group_name]
+
+        target_user_group = target_user_groups.select { |group| group.name == group_name }.first
+        next unless target_user_group
+
+        dashboard.grant(:member => target_user_group, :permission => group_dashboard[:permission])
+      end
+    end
+
+    def remove_user_groups_from_dashboard(group_dashboards, dashboard, common_group_names)
+      group_dashboards.each do |group_dashboard|
+        group_name = group_dashboard[:name]
+        next if common_group_names && common_group_names[group_name]
+
+        dashboard.revoke(:member => group_dashboard[:user_group], :permission => group_dashboard[:permission])
+      end
+    end
+
     # Creates a metric in a project
     #
     # @param [options] Optional report options
