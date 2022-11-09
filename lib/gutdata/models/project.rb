@@ -195,7 +195,7 @@ module GutData
     def remove_user_group(user_group_id)
       user_group = user_groups(user_group_id)
 
-      user_group.delete
+      user_group.delete if user_group
     end
 
 
