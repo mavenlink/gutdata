@@ -192,6 +192,13 @@ module GutData
 
     alias_method :create_group, :add_user_group
 
+    def remove_user_group(user_group_id)
+      user_group = project.user_groups[user_group_id]
+
+      user_group.delete
+    end
+
+
     def dashboard_user_groups(user_groups, dashboard)
       group_dashboards = []
       dashboard_grantees = dashboard.grantees['granteeURIs']['items'].select { |item| item['aclEntryURI']['grantee'].include?('/usergroups/') }
