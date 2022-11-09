@@ -19,7 +19,7 @@ module GutData
   # Create groups to more quickly manage permissions for users with
   # the the same role or who need similar access to dashboards.
   # Groups can be part of groups.
-  class UserGroup < Rest::Resource
+  class UserGroup < MdObject
     include Mixin::Author
     include Mixin::Contributor
     include Mixin::Links
