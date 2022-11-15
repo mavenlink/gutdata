@@ -30,7 +30,8 @@ module GutData
         'content' => {
           'name' => nil,
           'description' => nil,
-          'project' => nil
+          'project' => nil,
+          'id' => nil
         }
       }
     }
@@ -125,6 +126,13 @@ module GutData
     end
 
     alias_method :add_member, :add_members
+
+    # Gets user group id
+    #
+    # @return [String] User group id
+    def id
+      content['id']
+    end
 
     # Gets user group name
     #
