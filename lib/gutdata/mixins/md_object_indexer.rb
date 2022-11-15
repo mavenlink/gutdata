@@ -50,6 +50,10 @@ module GutData
             md_class = GutData::ReportDefinition
           when 'dataSet'
             md_class = GutData::Dataset
+          when 'analyticalDashboard'
+            md_class = GutData::AnalyticalDashboard
+          when 'visualizationObject'
+            md_class = GutData::VisualizationObject
           else
             md_class = self
           end
