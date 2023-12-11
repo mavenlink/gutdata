@@ -62,6 +62,7 @@ module GutData
           chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'], opts)
           if !chunks.nil? && !dry_run
             chunks['updateScript']['maqlDdlChunks'].each do |chunk|
+              GutData.logger.info "Migrating DDL chunk: #{chunk}" if opts[:verbose]
               result = project.execute_maql(chunk)
               raise result['wTaskStatus']['messages'].to_s if result['wTaskStatus']['status'] == 'ERROR'
             end
