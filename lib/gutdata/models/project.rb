@@ -767,7 +767,7 @@ module GutData
     # @param [Symbol | String] :all or nothing for all keys or a string for value of specific key
     # @return [Hash] key Hash of stored data
     def metadata(key = :all)
-      GutData::ProjectMetadata[key, {client: client, project: self}]
+      GutData::ProjectMetadata[key, { client: client, project: self }]
     end
 
     # Set data for specific key in project specific metadata storage
@@ -775,7 +775,7 @@ module GutData
     # @param [String] key key of the value to be stored
     # @return [String] val value to be stored
     def set_metadata(key, val)
-      GutData::ProjectMetadata[key, {client: client, project: self}] = val
+      GutData::ProjectMetadata[key, { client: client, project: self }] = val
     end
 
     # Helper for getting metrics of a project
