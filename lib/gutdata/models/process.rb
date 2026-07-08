@@ -130,7 +130,7 @@ module GutData
         Tempfile.open('deploy-graph-archive') do |temp|
           zip_filename = temp.path
           File.open(zip_filename, 'w') do |zip|
-            Zip::File.open(zip.path, Zip::File::CREATE) do |zipfile|
+            Zip::File.open(zip.path, create: true) do |zipfile|
               yield zipfile
             end
           end
