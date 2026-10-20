@@ -27,9 +27,6 @@ GEM
     colored (1.2)
     crack (0.4.5)
       rexml
-    debase (0.2.4.1)
-      debase-ruby_core_source (>= 0.10.2)
-    debase-ruby_core_source (0.10.16)
     diff-lcs (1.5.0)
     docile (1.4.0)
     domain_name (0.5.20190701)
@@ -98,7 +95,6 @@ PLATFORMS
 DEPENDENCIES
   ZenTest (~> 4.10, >= 4.11.0)
   bundler (>= 1.10.6)
-  debase (~> 0.1, >= 0.1.7)
   gutdata!
   rake (~> 13, >= 10.4.2)
   rake-notes (~> 0.2, >= 0.2.0)
